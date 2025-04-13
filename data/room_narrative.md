@@ -35,3 +35,41 @@
 # Lava Cave: You enter a cave filled with lava and molten rock. The heat is intense, and you can feel the sweat dripping down your face.
 
 # Ice Cavern: You enter an ice cavern, with icicles hanging from the ceiling. The air is frigid, and you can see your breath.
+
+# Chapel: You enter a chapel with stained glass windows filtering colored light onto the stone pews. The scent of incense lingers in the air.
+
+# Royal Bedchamber: You enter an opulent bedroom with a massive four-poster bed. The royal crest is embroidered on the velvet drapes.
+
+# Dungeon Crypt: You descend into an ancient crypt beneath the castle. The air is thick with the scent of decay, and the walls are lined with skeletal remains.
+
+# Kai Cenat's Tower: You climb into a mysterious tower filled with glowing artifacts. Strange whispers seem to come from the walls themselves.
+
+# Training Grounds: You enter a large open area with practice dummies and weapon racks. The sound of clashing steel echoes through the space.
+
+# Potion Storage: Shelves upon shelves of colorful potions line the walls. Some bubble ominously, while others glow with inner light.
+
+# Shrek's Swamp: You step into a muddy, smelly swamp. Onions grow wild and a distant voice shouts "WHAT ARE YOU DOING IN MY SWAMP?!"
+
+# Ancient Ruins: You walk through crumbling stone arches covered in vines. The remnants of a forgotten civilization surround you.
+
+# Moonlit Garden: You enter a beautiful garden bathed in silver moonlight. Night-blooming flowers perfume the air with their sweet scent.
+
+# Clockwork Workshop: You enter the workshop. Gears and mechanisms cover every surface. Tiny automatons scurry about, maintaining the delicate machinery.
+
+# Storage Room: You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light.
+
+# Servant's Quarters: A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air.
+
+# Corridor: You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance.
+
+# Abandoned Room: This room shows signs of long neglect. Broken furniture and cobwebs fill the space.
+
+# Meeting Chamber: You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here.
+
+# Waiting Area: Comfortable chairs line the walls of this antechamber. It seems designed for visitors to bide their time.
+
+# Small Hallway: A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections.
+
+# Forgotten Alcove: You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret.
+
+# Dusty Chamber: The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints.
