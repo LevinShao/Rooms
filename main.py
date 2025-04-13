@@ -245,7 +245,7 @@ while True:
             # Duke Dennis appears!
             duke_dennis = {
                 "name": "Duke Dennis", 
-                "hitpoints": 100,
+                "hitpoints": 70,
                 "type": "final_boss"
             }
             print_with_typing('\nSuddenly, a dark figure emerges from the shadows!')

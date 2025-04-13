@@ -40,7 +40,6 @@
 "I don't hate you."
 "The birth parents you are trying to reach do not love you, please hang up."
 "Remember when the platform was sliding into the fire pit? And I said 'Goodbye' and you were like 'no way'? And then I was all, 'We pretended we were going to murder you.' That was great."
-"Welcome back. Testing is available."
 "There was even going to be a party for you... a big party that all your friends were invited to. I invited your best friend the companion cube. Of course, he couldn’t come because you murdered him. All your other friends couldn’t come either, because you don’t have any other friends. Because of how unlikable you are. It says so here in your personnel file: Unlikable. Liked by no one. A bitter unlikable loner whose passing shall not be mourned. Shall NOT be mourned... that’s exactly what it says. Very formal. Very official. It also says you were adopted... so that’s funny too."
 "Oh. Did I accidentally fizzle that before you could complete the test? I’m sorry. Go ahead and grab another one. Oh. No. I fizzled that one too."
 "You euthanized your faithful Companion Cube more quickly than any test subject on record. Congratulations."

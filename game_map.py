@@ -1,4 +1,3 @@
-# game_map.py (updated)
 import json
 import random
 
@@ -110,34 +109,10 @@ def create_monsters():
         {"name": "Shrek", "hitpoints": 30},
         {"name": "Lirili Larila", "hitpoints": 45},
         {"name": "Kai Cenat", "hitpoints": 60, "type": "minor_boss"},
-        {"name": "Duke Dennis", "hitpoints": 100, "type": "final_boss"},
     ]
     return monsters
 
 # place the monsters in random rooms
-def place_monsters(grid):
-    monsters = create_monsters()
-    for monster in monsters:
-        while True:
-            row, col = random.randint(0, 9), random.randint(0, 9)
-            # Special placement for Shrek
-            if monster['name'] == "Shrek":
-                # Find Shrek's Swamp room
-                for r in range(10):
-                    for c in range(10):
-                        if grid[r][c]["title"] == "Shrek's Swamp":
-                            row, col = r, c
-                            break
-            elif monster['name'] == "Duke Dennis":
-                # Duke Dennis only appears in final encounter
-                continue
-            # Don't place monsters in starting room
-            if (row, col) != (0, 0):
-                monster["coordinates"] = (row, col)
-                grid[row][col]["M"] = monster
-                break
-    return grid
-
 def place_monsters(grid):
     monsters = create_monsters()
     for monster in monsters:
