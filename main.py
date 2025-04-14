@@ -1,13 +1,23 @@
 import json
 import random
 import time
+import os
 from game_map import create_grid, place_monsters, place_daphne, place_items
 
+# Game state initialization
 player_stats = {
     "health": 100,
     "inventory": [],
-    "moves_left": 101
+    "moves_left": 120
 }
+
+objectives = {
+    "find_daphne": False,
+    "find_key": False,
+    "runes_collected": 0
+}
+
+defeated_monsters = set()  # Tracks (row,col) of defeated monsters
 
 def typing_effect(text):
     for char in text:
@@ -15,12 +25,36 @@ def typing_effect(text):
         print(char, end='', flush=True)
 
 def print_with_typing(text):
-    """Helper function to print with typing effect and newline"""
     typing_effect(text + "\n")
 
-def combat(player, monster, is_final_boss=False):
-    """Handle combat between player and monster with new options"""
-    print_with_typing(f"\n⚔️  Combat with {monster['name']} (HP: {monster['hitpoints']})")
+def save_defeated_monsters():
+    """Save defeated monster locations to file"""
+    try:
+        os.makedirs("saves", exist_ok=True)
+        with open("saves/defeated_monsters.json", "w") as f:
+            json.dump([list(coords) for coords in defeated_monsters], f)
+    except Exception as e:
+        print_with_typing(f"Error saving defeated monsters: {e}")
+
+def load_defeated_monsters():
+    """Load defeated monster locations from file"""
+    try:
+        with open("saves/defeated_monsters.json", "r") as f:
+            return {tuple(coords) for coords in json.load(f)}
+    except (FileNotFoundError, json.JSONDecodeError):
+        return set()
+
+# Update the combat function (around line 40)
+def combat(player, monster, coordinates, is_final_boss=False):
+    """Handle combat between player and monster"""
+    # Special Kai Cenat introduction
+    if monster['name'] == "Kai Cenat":
+        print_with_typing("\nYou hear a cackling sound in the distance...")
+        time.sleep(1)
+        print_with_typing("Wait... is that Kai Cenat, the dark wizard...?")
+        time.sleep(1)
+    
+    print_with_typing(f"\n⚔️ Combat with {monster['name']} (HP: {monster['hitpoints']})")
     
     has_pet = any(isinstance(item, dict) and item.get('type') == 'pet' for item in player['inventory'])
     pet_heal_chance = 0.3 if has_pet else 0
@@ -28,11 +62,11 @@ def combat(player, monster, is_final_boss=False):
     while monster['hitpoints'] > 0 and player['health'] > 0:
         usable_items = [item for item in player['inventory'] if isinstance(item, str) and item in ["Health Potion", "Magic Scroll"]]
         
-        print_with_typing(f"\n❤️  Your HP: {player['health']}")
+        print_with_typing(f"\n❤️ Your HP: {player['health']}")
         print_with_typing(f"🖤 Monster HP: {monster['hitpoints']}")
         print_with_typing("\nWhat will you do?")
         
-        if is_final_boss:
+        if is_final_boss or monster['name'] == "Kai Cenat":
             action = input("A - Attack | D - Defend | H - Heal | I - Use Item > ").lower()
         else:
             action = input("A - Attack | D - Defend | H - Heal | I - Use Item | F - Flee > ").lower()
@@ -60,17 +94,26 @@ def combat(player, monster, is_final_boss=False):
                 
         if action == "a":
             damage = random.randint(5, 15)
+            # Kai Cenat takes less damage
+            if monster['name'] == "Kai Cenat":
+                damage = max(3, damage - 3)
             monster['hitpoints'] -= damage
             print_with_typing(f"You deal {damage} damage!")
             
             if monster['hitpoints'] > 0:
-                monster_dmg = random.randint(1, 3)
+                monster_dmg = random.randint(*monster['damage'])
+                # Kai Cenat deals more damage
+                if monster['name'] == "Kai Cenat":
+                    monster_dmg += 3
                 player['health'] -= monster_dmg
                 print_with_typing(f"{monster['name']} hits you for {monster_dmg} damage!")
                 
         elif action == "d":
             reduction = random.randint(1, 3)
-            monster_dmg = max(0, random.randint(1, 3) - reduction)
+            monster_dmg = max(0, random.randint(*monster['damage']) - reduction)
+            # Kai Cenat's attacks are harder to defend against
+            if monster['name'] == "Kai Cenat":
+                monster_dmg = max(2, monster_dmg)
             player['health'] -= monster_dmg
             print_with_typing(f"You brace for impact! Damage reduced by {reduction}.")
             if monster_dmg > 0:
@@ -80,6 +123,9 @@ def combat(player, monster, is_final_boss=False):
                 
         elif action == "h":
             heal_amount = random.randint(2, 5)
+            # Kai Cenat disrupts healing
+            if monster['name'] == "Kai Cenat":
+                heal_amount = max(1, heal_amount - 2)
             player['health'] += heal_amount
             print_with_typing(f"You focus and recover {heal_amount} HP!")
             
@@ -88,30 +134,41 @@ def combat(player, monster, is_final_boss=False):
                 player['health'] += extra_heal
                 print_with_typing(f"Your Cuddly Spirit helps you heal an extra {extra_heal} HP!")
             
-            monster_dmg = random.randint(1, 3)
+            monster_dmg = random.randint(*monster['damage'])
             player['health'] -= monster_dmg
             print_with_typing(f"{monster['name']} hits you for {monster_dmg} damage!")
             
         elif action == "f":
             flee_chance = 0.3 + (0.1 if has_pet else 0)
+            # Harder to flee from Kai Cenat
+            if monster['name'] == "Kai Cenat":
+                flee_chance = max(0.1, flee_chance - 0.2)
+                
             if random.random() < flee_chance:
                 print_with_typing("You escaped successfully!")
-                # Move player to a random adjacent room
-                directions = [(0,1), (1,0), (0,-1), (-1,0)]  # N, E, S, W
+                directions = [(0,1), (1,0), (0,-1), (-1,0)]
                 random.shuffle(directions)
                 for dr, dc in directions:
-                    new_row, new_col = player_coordinates[0]+dr, player_coordinates[1]+dc
+                    new_row, new_col = coordinates[0]+dr, coordinates[1]+dc
                     if 0 <= new_row < 10 and 0 <= new_col < 10:
-                        player_coordinates = (new_row, new_col)
-                        break
-                return False  # Combat ended by fleeing
+                        return False, (new_row, new_col)
+                return False, coordinates
             else:
                 print_with_typing("Escape failed!")
+                # All monsters now deal damage on failed flee
+                monster_dmg = random.randint(*monster['damage'])
+                # Kai Cenat gets enraged
+                if monster['name'] == "Kai Cenat":
+                    monster_dmg += 2
+                    print_with_typing("Kai Cenat becomes enraged by your attempt to flee!")
+                player['health'] -= monster_dmg
+                print_with_typing(f"{monster['name']} hits you for {monster_dmg} damage!")
     
     if monster['hitpoints'] <= 0:
         print_with_typing(f"\nYou defeated {monster['name']}!")
-        return True
-    return False
+        defeated_monsters.add(coordinates)
+        return True, coordinates
+    return False, coordinates
 
 def random_line():
     with open("data/quotes.md", "r", encoding='utf-8') as f:
@@ -141,6 +198,8 @@ def start_game():
 
 def game_loader():
     grid = load_game()
+    global defeated_monsters
+    defeated_monsters = load_defeated_monsters()
     time.sleep(1)
     print("\033c", end='')
     try:
@@ -159,23 +218,62 @@ start_game()
 
 print("\033c", end='')
 
-objectives = {
-    "find_daphne": False,
-    "find_key": False,
-    "runes_collected": 0
-}
-
 player_coordinates = (0, 0)
 last_coordinates = (0, 0)
 
 while True:
     current_room = grid[player_coordinates[0]][player_coordinates[1]]
     player_stats['moves_left'] -= 1
-    
+
+    if "O" in current_room:
+        obstacle = current_room["O"]
+        print_with_typing(f"\n⚠️ Obstacle: {obstacle['description']}")
+        
+        effect_type = obstacle.get("effect")
+        
+        if effect_type == "spiked_pit":
+            damage = random.randint(5, 10)
+            player_stats["health"] = max(1, player_stats["health"] - damage)
+            print_with_typing(f"You fall into a spiked pit, losing {damage} health!")
+        elif effect_type == "poison_gas":
+            damage = random.randint(3, 7)
+            player_stats["health"] = max(1, player_stats["health"] - damage)
+            print_with_typing(f"You inhale poison gas, losing {damage} health!")
+        elif effect_type == "collapsing_ceiling":
+            damage = random.randint(7, 12)
+            player_stats["health"] = max(1, player_stats["health"] - damage)
+            print_with_typing(f"Debris falls on you, causing {damage} damage!")
+        elif effect_type == "mysterious_altar":
+            choice = input("> ").lower()
+            if choice == 'y':
+                if random.random() < 0.5:
+                    heal = 15
+                    player_stats["health"] = min(100, player_stats["health"] + heal)
+                    print_with_typing(f"The altar blesses you with {heal} health!")
+                else:
+                    damage = 10
+                    player_stats["health"] = max(1, player_stats["health"] - damage)
+                    print_with_typing(f"The altar curses you with {damage} damage!")
+        elif effect_type == "illusionary_wall":
+            print_with_typing("You become disoriented and are teleported to a random room!")
+            while True:
+                new_row, new_col = random.randint(0, 9), random.randint(0, 9)
+                if (new_row, new_col) != player_coordinates and (new_row, new_col) != (5,5) and (new_row, new_col) != (9,9):
+                    player_coordinates = (new_row, new_col)
+                    break
+            continue
+        
+        # Remove obstacle after encountering it
+        del current_room["O"]
+        input("\nPress Enter to continue > ")
+        print("\033c", end='')
+        continue
+
     if current_room["title"] == "Shrek's Swamp" and "M" in current_room and current_room["M"]["name"] == "Shrek":
         print_with_typing("\n👹 WHAT ARE YOU DOING IN MY SWAMP?!")
         monster = current_room["M"]
-        if combat(player_stats, monster):
+        victory, player_coordinates = combat(player_stats, monster, player_coordinates)
+        if victory:
             del current_room["M"]
             current_room["item"] = "Onion of Power"
             print_with_typing("\nShrek drops a magical onion as he falls!")
@@ -184,11 +282,14 @@ while True:
     
     if player_stats['health'] <= 0:
         print_with_typing("\nYou died! Game Over. Better luck next time!")
+        save_defeated_monsters()
         break
+        
     if player_stats['moves_left'] <= 0:
         print_with_typing("\nTime's up! The Duke sacrificed Daphne.")
         print_with_typing("Her screams echo in your mind. You drop down to your knees and cry.")
-        print_with_typing("Game Over. Better luck next time.!")
+        print_with_typing("Game Over. Better luck next time!")
+        save_defeated_monsters()
         break
         
     print("\033c", end='')
@@ -230,19 +331,19 @@ while True:
     if "M" in current_room:
         monster = current_room["M"]
         print_with_typing(f"\n\n👹 You encountered {monster['name']}!")
-        if combat(player_stats, monster):
+        victory, player_coordinates = combat(player_stats, monster, player_coordinates)
+        if victory:
             del current_room["M"]
         else:
             continue
 
-    if "D" in current_room:
+    if player_coordinates == (9,9) and "D" in current_room:
         if objectives["find_key"] and objectives["runes_collected"] >= 3:
             print_with_typing("\nYou insert the Rusty Key into the magical lock.")
             time.sleep(2)
             print_with_typing("The three runes float from your pocket and shatter the barrier!")
             time.sleep(2)
             
-            # Duke Dennis appears!
             duke_dennis = {
                 "name": "Duke Dennis", 
                 "hitpoints": 70,
@@ -251,18 +352,20 @@ while True:
             print_with_typing('\nSuddenly, a dark figure emerges from the shadows!')
             print_with_typing('"NOT SO FAST!" bellows Duke Dennis, the final boss himself!')
             
-            if combat(player_stats, duke_dennis, is_final_boss=True):
+            victory, player_coordinates = combat(player_stats, duke_dennis, player_coordinates, is_final_boss=True)
+            if victory:
                 print_with_typing("\nWith Duke Dennis defeated, the magic cage shatters completely!")
                 time.sleep(2)
                 typing_effect('\nDaphne: "You did it! You really did it! The Duke\'s magic is broken!"')
                 time.sleep(2)
                 typing_effect('\nYou and Daphne embrace and share a passionate kiss, the magic of the runes swirling around you')
                 print_with_typing("\n\n🎉 VICTORY! You rescued Daphne!")
-                print_with_typing("Thanks for playing!")
+                save_defeated_monsters()
                 break
             else:
                 print_with_typing("\nDuke Dennis strikes you down as Daphne watches in horror!")
                 print_with_typing("Game Over. Better luck next time!")
+                save_defeated_monsters()
                 break
         else:
             print_with_typing("\nBefore you stands Daphne, trapped in a shimmering magical cage.")
