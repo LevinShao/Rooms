@@ -18,70 +18,80 @@
       "narrative": "Comfortable chairs line the walls of this antechamber. It seems designed for visitors to bide their time."
     },
     "2": {
-      "title": "Abandoned Room",
+      "title": "Corridor",
       "coordinates": [
         0,
         2
       ],
-      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
+      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance.",
+      "item": "Magic Scroll"
     },
     "3": {
-      "title": "Corridor",
+      "title": "Small Hallway",
       "coordinates": [
         0,
         3
       ],
-      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance."
+      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections.",
+      "O": {
+        "name": "Spiked Pit",
+        "description": "The floor suddenly gives way beneath you!",
+        "effect": "spiked_pit"
+      }
     },
     "4": {
-      "title": "Courtyard",
+      "title": "Abandoned Room",
       "coordinates": [
         0,
         4
       ],
-      "narrative": "You step out into a large courtyard, surrounded by towering walls. In the center of the courtyard is a large fountain, its water glistening in the sunlight.",
-      "item": "Magic Scroll"
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
     },
     "5": {
-      "title": "Dungeon Crypt",
+      "title": "Cavern",
       "coordinates": [
         0,
         5
       ],
-      "narrative": "You descend into an ancient crypt beneath the castle. The air is thick with the scent of decay, and the walls are lined with skeletal remains."
+      "narrative": "You enter a dark and eerie cavern, with stalactites hanging from the ceiling. The air is damp and musty, and you can hear the sound of dripping water."
     },
     "6": {
-      "title": "Forgotten Alcove",
+      "title": "Storage Room",
       "coordinates": [
         0,
         6
       ],
-      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret."
+      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light."
     },
     "7": {
-      "title": "Underwater Chamber",
+      "title": "Servant's Quarters",
       "coordinates": [
         0,
         7
       ],
-      "narrative": "You swim into an underwater chamber, with seaweed swaying in the current. You can see the outline of a treasure chest on the ocean floor."
+      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air.",
+      "item": "Magic Scroll"
     },
     "8": {
-      "title": "Moonlit Garden",
+      "title": "Servant's Quarters",
       "coordinates": [
         0,
         8
       ],
-      "narrative": "You enter a beautiful garden bathed in silver moonlight. Night-blooming flowers perfume the air with their sweet scent."
+      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
     },
     "9": {
-      "title": "Servant's Quarters",
+      "title": "Small Hallway",
       "coordinates": [
         0,
         9
       ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air.",
-      "item": "Health Potion"
+      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections.",
+      "O": {
+        "name": "Spiked Pit",
+        "description": "The floor suddenly gives way beneath you!",
+        "effect": "spiked_pit"
+      }
     }
   },
   "1": {
@@ -94,20 +104,20 @@
       "narrative": "Comfortable chairs line the walls of this antechamber. It seems designed for visitors to bide their time."
     },
     "1": {
-      "title": "Meeting Chamber",
+      "title": "Dusty Chamber",
       "coordinates": [
         1,
         1
       ],
-      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
+      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
     },
     "2": {
-      "title": "Dusty Chamber",
+      "title": "Meeting Chamber",
       "coordinates": [
         1,
         2
       ],
-      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
+      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
     },
     "3": {
       "title": "Corridor",
@@ -118,90 +128,82 @@
       "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance."
     },
     "4": {
-      "title": "Servant's Quarters",
+      "title": "Dusty Chamber",
       "coordinates": [
         1,
         4
       ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
+      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints.",
+      "O": {
+        "name": "Spiked Pit",
+        "description": "The floor suddenly gives way beneath you!",
+        "effect": "spiked_pit"
+      }
     },
     "5": {
-      "title": "Servant's Quarters",
+      "title": "Corridor",
       "coordinates": [
         1,
         5
       ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
+      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance."
     },
     "6": {
-      "title": "Secret Passage",
+      "title": "Forgotten Alcove",
       "coordinates": [
         1,
         6
       ],
-      "narrative": "You find a hidden passage, leading to a dark and mysterious tunnel. You can't see where it leads, but you know that it must be important."
+      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret."
     },
     "7": {
-      "title": "Storage Room",
+      "title": "Small Hallway",
       "coordinates": [
         1,
         7
       ],
-      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light."
+      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections."
     },
     "8": {
-      "title": "Storage Room",
+      "title": "Abandoned Room",
       "coordinates": [
         1,
         8
       ],
-      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light."
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
     },
     "9": {
-      "title": "Library",
+      "title": "Corridor",
       "coordinates": [
         1,
         9
       ],
-      "narrative": "You enter a grand library, filled with books of all kinds. The shelves are lined with ancient tomes and you can't help but feel a sense of wonder as you look around.",
-      "O": {
-        "name": "Collapsing Ceiling",
-        "description": "The ceiling begins to crumble above you!",
-        "effect": "collapsing_ceiling"
-      }
+      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance."
     }
   },
   "2": {
     "0": {
-      "title": "Small Hallway",
+      "title": "Meeting Chamber",
       "coordinates": [
         2,
         0
       ],
-      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections."
+      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
     },
     "1": {
-      "title": "Potion Storage",
+      "title": "Laboratory",
       "coordinates": [
         2,
         1
       ],
-      "narrative": "Shelves upon shelves of colorful potions line the walls. Some bubble ominously, while others glow with inner light.",
-      "item": "Health Potion"
+      "narrative": "You enter a laboratory, filled with bubbling beakers and strange devices. You can see a mad scientist working on an experiment in the corner.",
+      "item": "Magic Rune"
     },
     "2": {
-      "title": "Forgotten Alcove",
-      "coordinates": [
-        2,
-        2
-      ],
-      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret."
-    },
-    "3": {
       "title": "Shrek's Swamp",
       "coordinates": [
         2,
-        3
+        2
       ],
       "narrative": "You step into a muddy, smelly swamp. Onions grow wild and a distant voice shouts \"WHAT ARE YOU DOING IN MY SWAMP?!\"",
       "M": {
@@ -214,53 +216,54 @@
         "special": "Onion of Power",
         "coordinates": [
           2,
-          3
+          2
         ]
       }
     },
+    "3": {
+      "title": "Servant's Quarters",
+      "coordinates": [
+        2,
+        3
+      ],
+      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
+    },
     "4": {
-      "title": "Meeting Chamber",
+      "title": "Guard Room",
       "coordinates": [
         2,
         4
       ],
-      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here.",
-      "M": {
-        "name": "Rick Astley",
-        "hitpoints": 10,
-        "damage": [
-          2,
-          4
-        ],
-        "coordinates": [
-          2,
-          4
-        ]
-      }
+      "narrative": "You enter a room filled with guards. They eye you suspiciously, but don't make a move as you enter."
     },
     "5": {
-      "title": "Training Grounds",
+      "title": "Small Hallway",
       "coordinates": [
         2,
         5
       ],
-      "narrative": "You enter a large open area with practice dummies and weapon racks. The sound of clashing steel echoes through the space."
+      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections."
     },
     "6": {
-      "title": "Small Hallway",
+      "title": "Torture Chamber",
       "coordinates": [
         2,
         6
       ],
-      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections."
+      "narrative": "You enter a room filled with various instruments of torture. The air is heavy with the scent of blood and fear. You can't help but feel a sense of dread as you look around.",
+      "O": {
+        "name": "Mysterious Altar",
+        "description": "An ancient altar stands in the center. Interact? (Y/N)",
+        "effect": "mysterious_altar"
+      }
     },
     "7": {
-      "title": "Servant's Quarters",
+      "title": "Small Hallway",
       "coordinates": [
         2,
         7
       ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air.",
+      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections.",
       "O": {
         "name": "Spiked Pit",
         "description": "The floor suddenly gives way beneath you!",
@@ -268,38 +271,48 @@
       }
     },
     "8": {
-      "title": "Forgotten Alcove",
+      "title": "Meeting Chamber",
       "coordinates": [
         2,
         8
       ],
-      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret."
+      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here.",
+      "O": {
+        "name": "Collapsing Ceiling",
+        "description": "The ceiling begins to crumble above you!",
+        "effect": "collapsing_ceiling"
+      }
     },
     "9": {
-      "title": "Servant's Quarters",
+      "title": "Library",
       "coordinates": [
         2,
         9
       ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
+      "narrative": "You enter a grand library, filled with books of all kinds. The shelves are lined with ancient tomes and you can't help but feel a sense of wonder as you look around."
     }
   },
   "3": {
     "0": {
-      "title": "Kai Cenat's Tower",
+      "title": "Underwater Chamber",
       "coordinates": [
         3,
         0
       ],
-      "narrative": "You climb into a mysterious tower filled with glowing artifacts. Strange whispers seem to come from the walls themselves."
+      "narrative": "You swim into an underwater chamber, with seaweed swaying in the current. You can see the outline of a treasure chest on the ocean floor."
     },
     "1": {
-      "title": "Small Hallway",
+      "title": "Meeting Chamber",
       "coordinates": [
         3,
         1
       ],
-      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections."
+      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here.",
+      "O": {
+        "name": "Collapsing Ceiling",
+        "description": "The ceiling begins to crumble above you!",
+        "effect": "collapsing_ceiling"
+      }
     },
     "2": {
       "title": "Abandoned Room",
@@ -310,120 +323,9 @@
       "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
     },
     "3": {
-      "title": "Clockwork Workshop",
-      "coordinates": [
-        3,
-        3
-      ],
-      "narrative": "You enter the workshop. Gears and mechanisms cover every surface. Tiny automatons scurry about, maintaining the delicate machinery."
-    },
-    "4": {
       "title": "Dusty Chamber",
       "coordinates": [
         3,
-        4
-      ],
-      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
-    },
-    "5": {
-      "title": "Meeting Chamber",
-      "coordinates": [
-        3,
-        5
-      ],
-      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here.",
-      "M": {
-        "name": "Zhong Xina",
-        "hitpoints": 25,
-        "damage": [
-          4,
-          8
-        ],
-        "coordinates": [
-          3,
-          5
-        ]
-      }
-    },
-    "6": {
-      "title": "Servant's Quarters",
-      "coordinates": [
-        3,
-        6
-      ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air.",
-      "O": {
-        "name": "Collapsing Ceiling",
-        "description": "The ceiling begins to crumble above you!",
-        "effect": "collapsing_ceiling"
-      },
-      "item": "Magic Rune"
-    },
-    "7": {
-      "title": "Ice Cavern",
-      "coordinates": [
-        3,
-        7
-      ],
-      "narrative": "You enter an ice cavern, with icicles hanging from the ceiling. The air is frigid, and you can see your breath."
-    },
-    "8": {
-      "title": "Guard Room",
-      "coordinates": [
-        3,
-        8
-      ],
-      "narrative": "You enter a room filled with guards. They eye you suspiciously, but don't make a move as you enter."
-    },
-    "9": {
-      "title": "Small Hallway",
-      "coordinates": [
-        3,
-        9
-      ],
-      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections.",
-      "item": "Rusty Key"
-    }
-  },
-  "4": {
-    "0": {
-      "title": "Observatory",
-      "coordinates": [
-        4,
-        0
-      ],
-      "narrative": "You step into an observatory, filled with telescopes and star charts. The room is quiet, except for the occasional whisper of the wind.",
-      "O": {
-        "name": "Poison Gas",
-        "description": "A noxious green gas begins filling the room!",
-        "effect": "poison_gas"
-      }
-    },
-    "1": {
-      "title": "Servant's Quarters",
-      "coordinates": [
-        4,
-        1
-      ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
-    },
-    "2": {
-      "title": "Servant's Quarters",
-      "coordinates": [
-        4,
-        2
-      ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air.",
-      "O": {
-        "name": "Mysterious Altar",
-        "description": "An ancient altar stands in the center. Interact? (Y/N)",
-        "effect": "mysterious_altar"
-      }
-    },
-    "3": {
-      "title": "Dusty Chamber",
-      "coordinates": [
-        4,
         3
       ],
       "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
@@ -431,102 +333,197 @@
     "4": {
       "title": "Abandoned Room",
       "coordinates": [
+        3,
+        4
+      ],
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
+    },
+    "5": {
+      "title": "Servant's Quarters",
+      "coordinates": [
+        3,
+        5
+      ],
+      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air.",
+      "item": "Magic Rune"
+    },
+    "6": {
+      "title": "Abandoned Room",
+      "coordinates": [
+        3,
+        6
+      ],
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space.",
+      "item": "Rusty Key"
+    },
+    "7": {
+      "title": "Armory",
+      "coordinates": [
+        3,
+        7
+      ],
+      "narrative": "You find yourself in an armory, filled with weapons of all kinds. The room is well-lit, and you can see your reflection in the shiny metal of the swords and shields."
+    },
+    "8": {
+      "title": "Abandoned Room",
+      "coordinates": [
+        3,
+        8
+      ],
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space.",
+      "O": {
+        "name": "Collapsing Ceiling",
+        "description": "The ceiling begins to crumble above you!",
+        "effect": "collapsing_ceiling"
+      }
+    },
+    "9": {
+      "title": "Dusty Chamber",
+      "coordinates": [
+        3,
+        9
+      ],
+      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
+    }
+  },
+  "4": {
+    "0": {
+      "title": "Servant's Quarters",
+      "coordinates": [
+        4,
+        0
+      ],
+      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
+    },
+    "1": {
+      "title": "Observatory",
+      "coordinates": [
+        4,
+        1
+      ],
+      "narrative": "You step into an observatory, filled with telescopes and star charts. The room is quiet, except for the occasional whisper of the wind."
+    },
+    "2": {
+      "title": "Small Hallway",
+      "coordinates": [
+        4,
+        2
+      ],
+      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections."
+    },
+    "3": {
+      "title": "Corridor",
+      "coordinates": [
+        4,
+        3
+      ],
+      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance."
+    },
+    "4": {
+      "title": "Abandoned Room",
+      "coordinates": [
         4,
         4
       ],
-      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space.",
-      "item": "Magic Scroll"
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
     },
     "5": {
-      "title": "Forgotten Alcove",
+      "title": "Moonlit Garden",
       "coordinates": [
         4,
         5
       ],
-      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret."
+      "narrative": "You enter a beautiful garden bathed in silver moonlight. Night-blooming flowers perfume the air with their sweet scent."
     },
     "6": {
-      "title": "Storage Room",
+      "title": "Ice Cavern",
       "coordinates": [
         4,
         6
       ],
-      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light."
+      "narrative": "You enter an ice cavern, with icicles hanging from the ceiling. The air is frigid, and you can see your breath."
     },
     "7": {
-      "title": "Servant's Quarters",
+      "title": "Meeting Chamber",
       "coordinates": [
         4,
         7
       ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
+      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here.",
+      "M": {
+        "name": "Rick Astley",
+        "hitpoints": 10,
+        "damage": [
+          2,
+          4
+        ],
+        "coordinates": [
+          4,
+          7
+        ]
+      }
     },
     "8": {
-      "title": "Dusty Chamber",
+      "title": "Servant's Quarters",
       "coordinates": [
         4,
         8
       ],
-      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
+      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air.",
+      "M": {
+        "name": "Lirili Larila",
+        "hitpoints": 45,
+        "damage": [
+          7,
+          12
+        ],
+        "coordinates": [
+          4,
+          8
+        ]
+      }
     },
     "9": {
-      "title": "Lava Cave",
+      "title": "Dungeon Crypt",
       "coordinates": [
         4,
         9
       ],
-      "narrative": "You enter a cave filled with lava and molten rock. The heat is intense, and you can feel the sweat dripping down your face."
+      "narrative": "You descend into an ancient crypt beneath the castle. The air is thick with the scent of decay, and the walls are lined with skeletal remains."
     }
   },
   "5": {
     "0": {
-      "title": "Dusty Chamber",
+      "title": "Secret Passage",
       "coordinates": [
         5,
         0
       ],
-      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
+      "narrative": "You find a hidden passage, leading to a dark and mysterious tunnel. You can't see where it leads, but you know that it must be important."
     },
     "1": {
-      "title": "Forgotten Alcove",
+      "title": "Treasury",
       "coordinates": [
         5,
         1
       ],
-      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret.",
-      "O": {
-        "name": "Spiked Pit",
-        "description": "The floor suddenly gives way beneath you!",
-        "effect": "spiked_pit"
-      },
-      "M": {
-        "name": "Elon Musk",
-        "hitpoints": 20,
-        "damage": [
-          3,
-          6
-        ],
-        "coordinates": [
-          5,
-          1
-        ]
-      }
+      "narrative": "You enter a room filled with gold and jewels. The walls are lined with treasure chests and the air is filled with the scent of riches."
     },
     "2": {
-      "title": "Storage Room",
+      "title": "Abandoned Room",
       "coordinates": [
         5,
         2
       ],
-      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light."
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
     },
     "3": {
-      "title": "Meeting Chamber",
+      "title": "Small Hallway",
       "coordinates": [
         5,
         3
       ],
-      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
+      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections."
     },
     "4": {
       "title": "Forgotten Alcove",
@@ -545,100 +542,92 @@
       "narrative": "You enter a grand throne room, with a majestic throne at the far end. The room is filled with guards, and you can see the king sitting on his throne, looking down at you."
     },
     "6": {
-      "title": "Meeting Chamber",
+      "title": "Servant's Quarters",
       "coordinates": [
         5,
         6
       ],
-      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
+      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
     },
     "7": {
-      "title": "Small Hallway",
+      "title": "Corridor",
       "coordinates": [
         5,
         7
       ],
-      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections."
+      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance."
     },
     "8": {
-      "title": "Treasury",
+      "title": "Storage Room",
       "coordinates": [
         5,
         8
       ],
-      "narrative": "You enter a room filled with gold and jewels. The walls are lined with treasure chests and the air is filled with the scent of riches."
+      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light.",
+      "item": "Magic Rune"
     },
     "9": {
-      "title": "Ancient Ruins",
+      "title": "Corridor",
       "coordinates": [
         5,
         9
       ],
-      "narrative": "You walk through crumbling stone arches covered in vines. The remnants of a forgotten civilization surround you.",
-      "M": {
-        "name": "Kai Cenat",
-        "hitpoints": 60,
-        "damage": [
-          10,
-          15
-        ],
-        "type": "minor_boss",
-        "coordinates": [
-          5,
-          9
-        ]
+      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance.",
+      "O": {
+        "name": "Spiked Pit",
+        "description": "The floor suddenly gives way beneath you!",
+        "effect": "spiked_pit"
       }
     }
   },
   "6": {
     "0": {
-      "title": "Small Hallway",
+      "title": "Dusty Chamber",
       "coordinates": [
         6,
         0
       ],
-      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections."
+      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
     },
     "1": {
-      "title": "Corridor",
+      "title": "Courtyard",
       "coordinates": [
         6,
         1
       ],
-      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance."
+      "narrative": "You step out into a large courtyard, surrounded by towering walls. In the center of the courtyard is a large fountain, its water glistening in the sunlight."
     },
     "2": {
-      "title": "Forgotten Alcove",
+      "title": "Dining Hall",
       "coordinates": [
         6,
         2
       ],
-      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret.",
-      "item": "Magic Rune"
+      "narrative": "You enter a grand dining hall, with a long table stretching from end to end. The room is decorated with elegant tapestries and chandeliers, and you can hear the chatter of nobles enjoying their meal."
     },
     "3": {
-      "title": "Servant's Quarters",
+      "title": "Abandoned Room",
       "coordinates": [
         6,
         3
       ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
     },
     "4": {
-      "title": "Meeting Chamber",
+      "title": "Abandoned Room",
       "coordinates": [
         6,
         4
       ],
-      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
     },
     "5": {
-      "title": "Forgotten Alcove",
+      "title": "Abandoned Room",
       "coordinates": [
         6,
         5
       ],
-      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret."
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
     },
     "6": {
       "title": "Royal Bedchamber",
@@ -649,167 +638,95 @@
       "narrative": "You enter an opulent bedroom with a massive four-poster bed. The royal crest is embroidered on the velvet drapes."
     },
     "7": {
-      "title": "Storage Room",
+      "title": "Forgotten Alcove",
       "coordinates": [
         6,
         7
       ],
-      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light."
+      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret."
     },
     "8": {
-      "title": "Armory",
+      "title": "Abandoned Room",
       "coordinates": [
         6,
         8
       ],
-      "narrative": "You find yourself in an armory, filled with weapons of all kinds. The room is well-lit, and you can see your reflection in the shiny metal of the swords and shields."
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
     },
     "9": {
-      "title": "Dungeon Cell",
+      "title": "Chapel",
       "coordinates": [
         6,
         9
       ],
-      "narrative": "You find yourself in a cold and damp cell. The walls are made of stone and the only light comes from a small window high up on the wall. You hear the faint sound of dripping water.",
-      "M": {
-        "name": "Lirili Larila",
-        "hitpoints": 45,
-        "damage": [
-          7,
-          12
-        ],
-        "coordinates": [
-          6,
-          9
-        ]
-      }
+      "narrative": "You enter a chapel with stained glass windows filtering colored light onto the stone pews. The scent of incense lingers in the air."
     }
   },
   "7": {
     "0": {
-      "title": "Kitchen",
+      "title": "Abandoned Room",
       "coordinates": [
         7,
         0
+      ],
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
+    },
+    "1": {
+      "title": "Meeting Chamber",
+      "coordinates": [
+        7,
+        1
+      ],
+      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
+    },
+    "2": {
+      "title": "Kitchen",
+      "coordinates": [
+        7,
+        2
       ],
       "narrative": "You enter a large kitchen, filled with the aroma of freshly baked bread and roasted meats. You can see several cooks busy at work, preparing a feast fit for a king.",
       "item": "Health Potion"
     },
-    "1": {
-      "title": "Dining Hall",
-      "coordinates": [
-        7,
-        1
-      ],
-      "narrative": "You enter a grand dining hall, with a long table stretching from end to end. The room is decorated with elegant tapestries and chandeliers, and you can hear the chatter of nobles enjoying their meal."
-    },
-    "2": {
-      "title": "Storage Room",
-      "coordinates": [
-        7,
-        2
-      ],
-      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light."
-    },
     "3": {
-      "title": "Corridor",
+      "title": "Small Hallway",
       "coordinates": [
         7,
         3
       ],
-      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance."
+      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections."
     },
     "4": {
-      "title": "Cavern",
+      "title": "Abandoned Room",
       "coordinates": [
         7,
         4
       ],
-      "narrative": "You enter a dark and eerie cavern, with stalactites hanging from the ceiling. The air is damp and musty, and you can hear the sound of dripping water."
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
     },
     "5": {
-      "title": "Torture Chamber",
+      "title": "Dungeon Cell",
       "coordinates": [
         7,
         5
       ],
-      "narrative": "You enter a room filled with various instruments of torture. The air is heavy with the scent of blood and fear. You can't help but feel a sense of dread as you look around.",
-      "item": "Magic Rune"
+      "narrative": "You find yourself in a cold and damp cell. The walls are made of stone and the only light comes from a small window high up on the wall. You hear the faint sound of dripping water."
     },
     "6": {
-      "title": "Meeting Chamber",
+      "title": "Lava Cave",
       "coordinates": [
         7,
         6
       ],
-      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
+      "narrative": "You enter a cave filled with lava and molten rock. The heat is intense, and you can feel the sweat dripping down your face."
     },
     "7": {
-      "title": "Laboratory",
+      "title": "Clockwork Workshop",
       "coordinates": [
         7,
         7
       ],
-      "narrative": "You enter a laboratory, filled with bubbling beakers and strange devices. You can see a mad scientist working on an experiment in the corner.",
-      "item": "Health Potion"
-    },
-    "8": {
-      "title": "Forgotten Alcove",
-      "coordinates": [
-        7,
-        8
-      ],
-      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret."
-    },
-    "9": {
-      "title": "Dusty Chamber",
-      "coordinates": [
-        7,
-        9
-      ],
-      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
-    }
-  },
-  "8": {
-    "0": {
-      "title": "Servant's Quarters",
-      "coordinates": [
-        8,
-        0
-      ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
-    },
-    "1": {
-      "title": "Meeting Chamber",
-      "coordinates": [
-        8,
-        1
-      ],
-      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
-    },
-    "2": {
-      "title": "Stable",
-      "coordinates": [
-        8,
-        2
-      ],
-      "narrative": "You enter a stable, filled with horses and the smell of hay. The horses neigh as you enter, and you can see the stable boy tending to them."
-    },
-    "3": {
-      "title": "Meeting Chamber",
-      "coordinates": [
-        8,
-        3
-      ],
-      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
-    },
-    "4": {
-      "title": "Storage Room",
-      "coordinates": [
-        8,
-        4
-      ],
-      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light.",
+      "narrative": "You enter the workshop. Gears and mechanisms cover every surface. Tiny automatons scurry about, maintaining the delicate machinery.",
       "M": {
         "name": "Amoogus",
         "hitpoints": 5,
@@ -818,55 +735,134 @@
           3
         ],
         "coordinates": [
-          8,
-          4
+          7,
+          7
         ]
       }
-    },
-    "5": {
-      "title": "Storage Room",
-      "coordinates": [
-        8,
-        5
-      ],
-      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light."
-    },
-    "6": {
-      "title": "Dusty Chamber",
-      "coordinates": [
-        8,
-        6
-      ],
-      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
-    },
-    "7": {
-      "title": "Forgotten Alcove",
-      "coordinates": [
-        8,
-        7
-      ],
-      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret."
     },
     "8": {
       "title": "Meeting Chamber",
       "coordinates": [
-        8,
+        7,
         8
       ],
       "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
     },
     "9": {
+      "title": "Training Grounds",
+      "coordinates": [
+        7,
+        9
+      ],
+      "narrative": "You enter a large open area with practice dummies and weapon racks. The sound of clashing steel echoes through the space."
+    }
+  },
+  "8": {
+    "0": {
       "title": "Dusty Chamber",
+      "coordinates": [
+        8,
+        0
+      ],
+      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
+    },
+    "1": {
+      "title": "Kai Cenat's Tower",
+      "coordinates": [
+        8,
+        1
+      ],
+      "narrative": "You climb into a mysterious tower filled with glowing artifacts. Strange whispers seem to come from the walls themselves.",
+      "M": {
+        "name": "Kai Cenat",
+        "hitpoints": 60,
+        "damage": [
+          10,
+          15
+        ],
+        "type": "minor_boss",
+        "coordinates": [
+          8,
+          1
+        ]
+      }
+    },
+    "2": {
+      "title": "Meeting Chamber",
+      "coordinates": [
+        8,
+        2
+      ],
+      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
+    },
+    "3": {
+      "title": "Forgotten Alcove",
+      "coordinates": [
+        8,
+        3
+      ],
+      "narrative": "You see a tiny hidden space barely large enough to stand in. Someone clearly wanted to keep this place secret."
+    },
+    "4": {
+      "title": "Meeting Chamber",
+      "coordinates": [
+        8,
+        4
+      ],
+      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here.",
+      "item": "Health Potion"
+    },
+    "5": {
+      "title": "Ancient Ruins",
+      "coordinates": [
+        8,
+        5
+      ],
+      "narrative": "You walk through crumbling stone arches covered in vines. The remnants of a forgotten civilization surround you."
+    },
+    "6": {
+      "title": "Abandoned Room",
+      "coordinates": [
+        8,
+        6
+      ],
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
+    },
+    "7": {
+      "title": "Storage Room",
+      "coordinates": [
+        8,
+        7
+      ],
+      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light."
+    },
+    "8": {
+      "title": "Abandoned Room",
+      "coordinates": [
+        8,
+        8
+      ],
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space.",
+      "M": {
+        "name": "Zhong Xina",
+        "hitpoints": 25,
+        "damage": [
+          4,
+          8
+        ],
+        "coordinates": [
+          8,
+          8
+        ]
+      }
+    },
+    "9": {
+      "title": "Meeting Chamber",
       "coordinates": [
         8,
         9
       ],
-      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints.",
-      "O": {
-        "name": "Mysterious Altar",
-        "description": "An ancient altar stands in the center. Interact? (Y/N)",
-        "effect": "mysterious_altar"
-      }
+      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
     }
   },
   "9": {
@@ -879,73 +875,87 @@
       "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
     },
     "1": {
-      "title": "Servant's Quarters",
+      "title": "Storage Room",
       "coordinates": [
         9,
         1
       ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
+      "narrative": "You enter the storage room. Crates and barrels are stacked haphazardly in this cluttered space. Dust motes dance in the dim light."
     },
     "2": {
-      "title": "Abandoned Room",
+      "title": "Potion Storage",
       "coordinates": [
         9,
         2
       ],
-      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space."
+      "narrative": "Shelves upon shelves of colorful potions line the walls. Some bubble ominously, while others glow with inner light.",
+      "O": {
+        "name": "Poison Gas",
+        "description": "A noxious green gas begins filling the room!",
+        "effect": "poison_gas"
+      },
+      "item": "Health Potion"
     },
     "3": {
-      "title": "Abandoned Room",
+      "title": "Small Hallway",
       "coordinates": [
         9,
         3
       ],
-      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space.",
-      "O": {
-        "name": "Spiked Pit",
-        "description": "The floor suddenly gives way beneath you!",
-        "effect": "spiked_pit"
-      }
+      "narrative": "A cramped passageway lie before you. There are many wists and turns. You have to turn sideways to get through some sections."
     },
     "4": {
-      "title": "Corridor",
+      "title": "Abandoned Room",
       "coordinates": [
         9,
         4
       ],
-      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance."
+      "narrative": "This room shows signs of long neglect. Broken furniture and cobwebs fill the space.",
+      "item": "Health Potion"
     },
     "5": {
-      "title": "Servant's Quarters",
+      "title": "Dusty Chamber",
       "coordinates": [
         9,
         5
       ],
-      "narrative": "A simple but cozy room with several small beds. The scent of soap and fresh linen fills the air."
+      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints."
     },
     "6": {
-      "title": "Meeting Chamber",
+      "title": "Corridor",
       "coordinates": [
         9,
         6
       ],
-      "narrative": "You enter a formal room with a large table and high-backed chairs. Important discussions must have happened here."
+      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance."
     },
     "7": {
-      "title": "Corridor",
+      "title": "Dusty Chamber",
       "coordinates": [
         9,
         7
       ],
-      "narrative": "You enter a long, narrow hallway with torches spaced evenly along the walls. The sound of footsteps echoes in the distance."
+      "narrative": "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints.",
+      "M": {
+        "name": "Elon Musk",
+        "hitpoints": 20,
+        "damage": [
+          3,
+          6
+        ],
+        "coordinates": [
+          9,
+          7
+        ]
+      }
     },
     "8": {
-      "title": "Chapel",
+      "title": "Stable",
       "coordinates": [
         9,
         8
       ],
-      "narrative": "You enter a chapel with stained glass windows filtering colored light onto the stone pews. The scent of incense lingers in the air."
+      "narrative": "You enter a stable, filled with horses and the smell of hay. The horses neigh as you enter, and you can see the stable boy tending to them."
     },
     "9": {
       "title": "Dungeon Heart",

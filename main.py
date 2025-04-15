@@ -6,7 +6,7 @@ from game_map import create_grid, place_monsters, place_daphne, place_items
 
 # Game state initialization
 player_stats = {
-    "health": 100,
+    "health": 150,
     "inventory": [],
     "moves_left": 120
 }
@@ -220,10 +220,15 @@ print("\033c", end='')
 
 player_coordinates = (0, 0)
 last_coordinates = (0, 0)
+first_move = True  # Add this flag to track first move
 
 while True:
     current_room = grid[player_coordinates[0]][player_coordinates[1]]
-    player_stats['moves_left'] -= 1
+    
+    # Only deduct move if it's not the first move
+    if not first_move:
+        player_stats['moves_left'] -= 1
+    first_move = False  # Set to False after first iteration
 
     if "O" in current_room:
         obstacle = current_room["O"]
@@ -389,7 +394,7 @@ while True:
             continue
 
     while True:
-        movement = input("\n\nUse W, A, S, D to move > ").lower()
+        movement = input("\nUse W, A, S, D to move > ").lower()
         
         new_coordinates = player_coordinates
         if movement == "w":
