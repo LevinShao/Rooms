@@ -1,7 +1,8 @@
 # **11ASE Assessment Task 2**
 ## **By Levin Shao**
 =======================================================================
-## **Sprint 1**
+# **Sprint 1**
+## **Requirements and Specifications**
 ## The Plan
 I am planning to recreate the extremely popular Roblox game called Doors made by LSPLASH into my own version in Python. This game will be using a basic command-line interface (since Doors is a game that will require excellent visual graphics if made with a GUI application, and since I don't have too much experience with Pygame and Tkinter I'm just not sure how I would be able to find a way to recreate it there taking considerations of time restraints). 
 
@@ -55,3 +56,78 @@ If you aren't familiar with what the game Doors is about (which I'm sure you don
 * **Error Handling:** What possible errors could you face that need to be handled by the system?
 
     First of all, my program must be able to handle the most common type of warnings: invalid keys trigger warnings (Example of resolution: "Invalid command! Use W/S to move!"). In situations whereas certain movement might be prohibitied (e.g. trying to go backwards at Room 0 a.k.a the entrance) will result in error statements (Example of resolution: "It's too late for you to go back. Your only choice is forward."). Edge cases (whereas health might go below 0) should reset the game gracefully. Also, if it does become an issue, input loops (e.g. endless prompts) will be be prevented with timeout safeguards.
+
+### Non-Functional Specifications
+
+* **Performance:** How quickly should we try to get the system to perform tasks, what efficiency is required to maintain user engagement? How can we ensure our program remains efficient?
+
+    To improve overall performance and efficiency, I can make the event resolutions, such as combat outcomes, feel instantaneous. Also, a chunk of text that is getting printed in the terminal at once can break immersion, so I might use a typing effect that loads the text progressively, allowing users to catch up with the text and read them properly so that no information are getting missed out on. Lastly, any loops or specific calculations within my code will be heavily optimised so that the overall output process is faster and more accurate.
+
+* **Usability & Accessibility:** How might you make your application more accessible? What could you do with the User Interface to improve usability?
+
+    To improve the usability and accessibility of the overall game, I'm going to make the onscreen instructions as clear as possible to clear out any possible confusion that will be brought upon the player during the game. The overall design should be simple, and I will also give clear error messages that explains the issue as well as outlining the resolutions towards them. Lastly, usability of the user interface could be improved by using minimalistic-styled menus, and accessibility will be massively improved by using user input keys that can be accessed with just a keyboard. 
+
+* **Reliability:** What could perhaps not crash the whole system, but could be an issue and needs to be addressed? Data integrity? Illogical calculation? Menu navigation going to wrong places?
+
+    To ensure reliability and data integrity, we must first ensure that health and door values never corrupt mid-game. Also, we should prevent any illogical outcomes, such as healing above max HP, from happening. Navigation must always reflect valid choices (e.g. no "Room 101"), and all monsters should have their own unique behaviour, making sure that they don't get mixed up. Lastly, the data for the player's items should not override or corrupt. If all of these are achieved, then the reliability of the game will ultimately be ensured.
+
+## Use Cases for Functional Requirements
+
+### Use Case 1: Data Retrieval
+
+**Actor:** Player
+
+**Preconditions:** Game is running; player has either started a new session or loaded a saved one.
+
+**Main Flow:**
+1. Player presses W to advance to next door, leading to the system generating a new room/event.
+2. System displays updated door number (e.g. "Room 024"), room description, and health status.
+3. If an event triggers (e.g. monster spawning), system retrieves and displays the event details (e.g. "You hear Rush charging at you in the distance! Press H to hide!").
+
+**Alternative Flow:**
+
+1. Player presses H for help.
+2. System repeats current room/status without progression.
+
+**Postconditions:** Player sees real-time updates of door number, health, and event context.
+
+### Use Case 2: User Interface
+
+**Actor:** Player
+
+**Preconditions:** Python environment is fully set up; game is launched in code terminal.
+
+**Main Flow:**
+1. Player uses W/S to navigate the rooms, and the system processes input instantly.
+2. During events, player uses A/D for actions, and the system validates input.
+3. Player presses Q, leading to the system exiting gracefully after confirmation ("Quit? Y/N").
+
+**Alternative Flow:**
+
+1. Player inputs an invalid command/key during interaction (e.g. Z)
+2. System ignores input and displays controls reminder ("Use W or S!").
+
+**Postconditions:** Player interacts with the game seamlessly via CLI; invalid inputs never crash the game.
+
+### Use Case 3: Data Display
+
+**Actor:** Player
+
+**Preconditions:** Player is mid-game; an event occurs.
+
+**Main Flow:**
+1. System outputs event description (e.g. "Door 056: The lights flicker...").
+2. Any critical information is highlighted (e.g. "⚠️ Health: 10/100").
+3. Success/failure outcomes are clear (e.g. "You solved the puzzle! +20 HP").
+
+**Alternative Flow:**
+1. Player health goes down to 0 and they die in-game.
+2. The system displays loss screen and prompts restart.
+
+**Postconditions:** Information is formatted for clarity; urgent statuses like low health are emphasized.
+
+## **Design**
+
+### Level 0 DFD/Context Diagram
+
+![Level 0 DFD](/images/Level%200%20DFD.png)
