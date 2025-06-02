@@ -128,10 +128,23 @@ If you aren't familiar with what the game Doors is about (which I'm sure you don
 
 ## **Design**
 
-### Level 0 DFD/Context Diagram
+### Game Introduction Storyboard
+![Game Intro Storyboard](/images/Storyboards/Game%20Intro%20Storyboard.png)
 
-![Level 0 DFD](/images/Level%200%20DFD.png)
+### Normal Room Storyboard
+![Normal Room Storyboard](/images/Storyboards/Normal%20Room%20Storyboard.png)
+
+### Entity Room Storyboard
+![Entity Room Storyboard](/images/Storyboards/Entity%20Room%20Storyboard.png)
+
+### Game Outro Storyboard
+![Game Outro Storyboard](/images/Storyboards/Game%20Outro%20Storyboard.png)
+
+### Level 0 Data Flow Diagram/Context Diagram
+![Level 0 DFD](/images/DFDs/Level%200%20DFD.png)
+
+### Level 1 Data Flow Diagram
+![Level 1 DFD](/images/DFDs/Level%201%20DFD.png)
 
 ### Gantt Chart
-
 ![Gantt Chart](/images/Gantt%20Chart.png)
