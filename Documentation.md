@@ -75,59 +75,63 @@ If you aren't familiar with what the game Doors is about (which I'm sure you don
 
 ### Use Case 1: Data Retrieval
 
-**Actor:** Player
+&nbsp;&nbsp;&nbsp;&nbsp; **Actor:** Player
 
-**Preconditions:** Game is running; player has either started a new session or loaded a saved one.
+&nbsp;&nbsp;&nbsp;&nbsp; **Preconditions:** Game is running; player has either started a new session or loaded a saved one.
 
-**Main Flow:**
+&nbsp;&nbsp;&nbsp;&nbsp; **Main Flow:**
 1. Player presses W to advance to next door, leading to the system generating a new room/event.
 2. System displays updated door number (e.g. "Room 024"), room description, and health status.
 3. If an event triggers (e.g. monster spawning), system retrieves and displays the event details (e.g. "You hear Rush charging at you in the distance! Press H to hide!").
 
-**Alternative Flow:**
+&nbsp;&nbsp;&nbsp;&nbsp; **Alternative Flow:**
 
 1. Player presses H for help.
 2. System repeats current room/status without progression.
 
-**Postconditions:** Player sees real-time updates of door number, health, and event context.
+&nbsp;&nbsp;&nbsp;&nbsp; **Postconditions:** Player sees real-time updates of door number, health, and event context.
 
 ### Use Case 2: User Interface
 
-**Actor:** Player
+&nbsp;&nbsp;&nbsp;&nbsp; **Actor:** Player
 
-**Preconditions:** Python environment is fully set up; game is launched in code terminal.
+&nbsp;&nbsp;&nbsp;&nbsp; **Preconditions:** Python environment is fully set up; game is launched in code terminal.
 
-**Main Flow:**
+&nbsp;&nbsp;&nbsp;&nbsp; **Main Flow:**
 1. Player uses W/S to navigate the rooms, and the system processes input instantly.
 2. During events, player uses A/D for actions, and the system validates input.
 3. Player presses Q, leading to the system exiting gracefully after confirmation ("Quit? Y/N").
 
-**Alternative Flow:**
+&nbsp;&nbsp;&nbsp;&nbsp; **Alternative Flow:**
 
 1. Player inputs an invalid command/key during interaction (e.g. Z)
 2. System ignores input and displays controls reminder ("Use W or S!").
 
-**Postconditions:** Player interacts with the game seamlessly via CLI; invalid inputs never crash the game.
+&nbsp;&nbsp;&nbsp;&nbsp; **Postconditions:** Player interacts with the game seamlessly via CLI; invalid inputs never crash the game.
 
 ### Use Case 3: Data Display
 
-**Actor:** Player
+&nbsp;&nbsp;&nbsp;&nbsp; **Actor:** Player
 
-**Preconditions:** Player is mid-game; an event occurs.
+&nbsp;&nbsp;&nbsp;&nbsp; **Preconditions:** Player is mid-game; an event occurs.
 
-**Main Flow:**
+&nbsp;&nbsp;&nbsp;&nbsp; **Main Flow:**
 1. System outputs event description (e.g. "Door 056: The lights flicker...").
 2. Any critical information is highlighted (e.g. "⚠️ Health: 10/100").
 3. Success/failure outcomes are clear (e.g. "You solved the puzzle! +20 HP").
 
-**Alternative Flow:**
+&nbsp;&nbsp;&nbsp;&nbsp; **Alternative Flow:**
 1. Player health goes down to 0 and they die in-game.
 2. The system displays loss screen and prompts restart.
 
-**Postconditions:** Information is formatted for clarity; urgent statuses like low health are emphasized.
+&nbsp;&nbsp;&nbsp;&nbsp; **Postconditions:** Information is formatted for clarity; urgent statuses like low health are emphasized.
 
 ## **Design**
 
 ### Level 0 DFD/Context Diagram
 
 ![Level 0 DFD](/images/Level%200%20DFD.png)
+
+### Gantt Chart
+
+![Gantt Chart](/images/Gantt%20Chart.png)
