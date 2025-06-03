@@ -81,15 +81,18 @@ If you aren't familiar with what the game Doors is about (which I'm sure you don
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Main Flow:**
 1. Player presses W to advance to next door, leading to the system generating a new room/event.
-2. System displays updated door number (e.g. "Room 024"), room description, and health status.
-3. If an event triggers (e.g. monster spawning), system retrieves and displays the event details (e.g. "You hear Rush charging at you in the distance! Press H to hide!").
+2. System displays necessary information along the way such as updated door number (e.g. "Room 024"), room description, and health status.
+3. System uses the random module to randomly decide if an event should be triggered in the player's current room.
+4. If an event triggers (e.g. monster spawning or obstacles), system retrieves and displays the event details (e.g. "You hear Rush charging at you in the distance! Press H to hide!").
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Alternative Flow:**
 
-1. Player presses H for help.
-2. System repeats current room/status without progression.
+1. An event doesn't trigger in the player's current room.
+2. Player progresses to the next room, repeating the whole main flow process.
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Postconditions:** Player sees real-time updates of door number, health, and event context.
+
+![Storyboard 2](/images/Use%20Case%20Diagrams/Data%20Retrieval%20Use%20Case.png)
 
 ### Use Case 2: User Interface
 
@@ -136,6 +139,10 @@ If you aren't familiar with what the game Doors is about (which I'm sure you don
 
 ### Entity Room Storyboard
 ![Entity Room Storyboard](/images/Storyboards/Entity%20Room%20Storyboard.png)
+
+### Levin's Shop (Room 052) Storyboards
+![Storyboard 1](/images/Storyboards/Levin's%20Shop%20Storyboard%20Part%201.png)
+![Storyboard 2](/images/Storyboards/Levin's%20Shop%20Storyboard%20Part%202.png)
 
 ### Game Outro Storyboard
 ![Game Outro Storyboard](/images/Storyboards/Game%20Outro%20Storyboard.png)
