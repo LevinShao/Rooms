@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="4.2">
+    <attributes>
+        <attribute name="name" value="Main Game Loop"/>
+        <attribute name="authors" value="levin"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2025-06-07 12:40:19 &#19979;&#21320;"/>
+        <attribute name="created" value="bGV2aW47TEVNT05QQzsyMDI1LTA2LTA3OzExOjI2OjQ4IOS4iuWNiDs0MzQ5Nw=="/>
+        <attribute name="edited" value="bGV2aW47TEVNT05QQzsyMDI1LTA2LTA3OzEyOjQwOjE5IOS4i+WNiDsxOzQzNjAx"/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body/>
+    </function>
+    <function name="BEGIN" type="None" variable="">
+        <parameters/>
+        <body>
+            <output expression="showIntroScreen" newline="True"/>
+            <while expression="initializeGameState">
+                <if expression="playerHealth &gt; 0">
+                    <then>
+                        <output expression="roomInfo" newline="True"/>
+                        <output expression="healthStatus" newline="True"/>
+                        <output expression="Inventory" newline="True"/>
+                        <if expression="room = 100">
+                            <then>
+                                <output expression="finalChallenge" newline="True"/>
+                                <if expression="challenges = PASSED">
+                                    <then>
+                                        <output expression="victorySequence" newline="True"/>
+                                        <output expression="&quot;Since you have beaten the game, would you like to quit or replay?&quot;" newline="True"/>
+                                    </then>
+                                    <else>
+                                        <output expression="&quot;Better luck next time!&quot;" newline="True"/>
+                                        <call expression="return"/>
+                                    </else>
+                                </if>
+                            </then>
+                            <else>
+                                <if expression="room = 50">
+                                    <then>
+                                        <output expression="midGameChallenge" newline="True"/>
+                                        <if expression="midGameChallenge = PASSED">
+                                            <then>
+                                                <output expression="congrautlationsMessage" newline="True"/>
+                                                <call expression="Proceed"/>
+                                            </then>
+                                            <else>
+                                                <output expression="&quot;Better luck next time!&quot;" newline="True"/>
+                                            </else>
+                                        </if>
+                                    </then>
+                                    <else>
+                                        <if expression="room = 52">
+                                            <then>
+                                                <output expression="levinsShop" newline="True"/>
+                                                <call expression="Proceed"/>
+                                            </then>
+                                            <else>
+                                                <output expression="&quot;Choose a valid command!&quot;" newline="True"/>
+                                                <call expression="return"/>
+                                            </else>
+                                        </if>
+                                        <input variable="moveForward"/>
+                                        <input variable="moveBackward"/>
+                                        <input variable="specialAction"/>
+                                        <input variable="useItem"/>
+                                        <input variable="lootRoom"/>
+                                        <input variable="Quit"/>
+                                        <if expression="input = Valid">
+                                            <then>
+                                                <if expression="playerCommand = Q">
+                                                    <then>
+                                                        <output expression="&quot;Goodbye!&quot;" newline="True"/>
+                                                        <call expression="break"/>
+                                                    </then>
+                                                    <else>
+                                                        <call expression="Proceed"/>
+                                                    </else>
+                                                </if>
+                                            </then>
+                                            <else>
+                                                <output expression="&quot;Please enter a valid command!&quot;" newline="True"/>
+                                            </else>
+                                        </if>
+                                    </else>
+                                </if>
+                            </else>
+                        </if>
+                    </then>
+                    <else>
+                        <output expression="&quot;Unfortunately, you ran out of health.&quot;" newline="True"/>
+                        <call expression="break"/>
+                    </else>
+                </if>
+                <if expression="player = Replay">
+                    <then/>
+                    <else>
+                        <call expression="break"/>
+                    </else>
+                </if>
+            </while>
+        </body>
+    </function>
+</flowgorithm>

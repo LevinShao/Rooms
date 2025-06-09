@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="4.2">
+    <attributes>
+        <attribute name="name" value="Move Forward"/>
+        <attribute name="authors" value="levin"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2025-06-07 02:00:43 &#19979;&#21320;"/>
+        <attribute name="created" value="bGV2aW47TEVNT05QQzsyMDI1LTA2LTA3OzAxOjUyOjAwIOS4i+WNiDs0MzQ4NA=="/>
+        <attribute name="edited" value="bGV2aW47TEVNT05QQzsyMDI1LTA2LTA3OzAyOjAwOjQzIOS4i+WNiDsxOzQzNTkz"/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body/>
+    </function>
+    <function name="moveForward" type="None" variable="">
+        <parameters/>
+        <body>
+            <if expression="Room = 100">
+                <then>
+                    <output expression="incrementRoom" newline="True"/>
+                    <output expression="RoomEntry" newline="True"/>
+                    <output expression="checkDarkRoom" newline="True"/>
+                    <output expression="checkLockedDoor" newline="True"/>
+                    <output expression="spawnEntity" newline="True"/>
+                    <output expression="spawnObstacles" newline="True"/>
+                    <if expression="Room = 52">
+                        <then>
+                            <if expression="Room &gt;= 90">
+                                <then>
+                                    <output expression="increaseEntitySpawnRate" newline="True"/>
+                                    <output expression="increaseObstacleSpawnRate" newline="True"/>
+                                </then>
+                                <else/>
+                            </if>
+                        </then>
+                        <else>
+                            <output expression="showShopMenu" newline="True"/>
+                        </else>
+                    </if>
+                </then>
+                <else>
+                    <call expression="return"/>
+                </else>
+            </if>
+        </body>
+    </function>
+</flowgorithm>

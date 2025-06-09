@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="4.2">
+    <attributes>
+        <attribute name="name" value="Loot Room"/>
+        <attribute name="authors" value="levin"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2025-06-07 04:53:06 &#19979;&#21320;"/>
+        <attribute name="created" value="bGV2aW47TEVNT05QQzsyMDI1LTA2LTA3OzA0OjI1OjQwIOS4i+WNiDs0MzQ5MQ=="/>
+        <attribute name="edited" value="bGV2aW47TEVNT05QQzsyMDI1LTA2LTA3OzA0OjUzOjA2IOS4i+WNiDsxOzQzNjAy"/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body/>
+    </function>
+    <function name="lootRoom" type="None" variable="">
+        <parameters/>
+        <body>
+            <if expression="room = alreadyLooted">
+                <then>
+                    <output expression="errorMessage" newline="True"/>
+                    <call expression="return"/>
+                </then>
+                <else>
+                    <assign variable="coins" expression="Inventory"/>
+                    <output expression="coinMessage" newline="True"/>
+                    <if expression="itemFound = True">
+                        <then>
+                            <assign variable="item" expression="Inventory"/>
+                            <output expression="itemMessage" newline="True"/>
+                        </then>
+                        <else/>
+                    </if>
+                    <if expression="spiderAttack = True">
+                        <then>
+                            <assign variable="deductHealth" expression="PlayerHealth"/>
+                            <output expression="spiderAttackMessage" newline="True"/>
+                        </then>
+                        <else/>
+                    </if>
+                    <assign variable="room" expression="looted"/>
+                </else>
+            </if>
+        </body>
+    </function>
+</flowgorithm>
