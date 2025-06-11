@@ -295,8 +295,10 @@ def use_item() -> str:
 # Because it displays critical information about the player's current status.
 def show_status(): # Show the player's current status, including room number, health, coins, and inventory
     """Display the player's current progress in the game."""
+    # The option bar right here
     fancy_text(f"Room: {current_room:03d} | HP: {player_health}/100 | Coins: {coins}")
-    if inventory:
+    # Show the player inventory
+    if inventory: # If there are anything in the inventory
         # Group identical items for display
         item_counts = {}
         # Loop through the inventory and count the number of uses for each item

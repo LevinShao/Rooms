@@ -36,24 +36,30 @@ def main():
         command = input("\nOptions: [W] Forward | [S] Backward | [L] Loot Room | [U] Use Item | [Q] Quit > ").lower() # The options bar right here
         
         if command == "w":
+            # Move Forward
             move_forward()
         elif command == "s":
+            # Move Backward
             move_backward()
         elif command == "l":
+            # Loot Room
             loot_room()
             print("\033c", end="")  # Clear screen after looting
             continue  # Skip to next iteration to refresh display
         elif command == "u":
+            # Use Item
             use_item()
             print("\033c", end="")  # Clear screen after using item
             continue  # Skip to next iteration to refresh display
         elif command == "q":
+            # Quit
             fancy_text("\nThanks for playing! Goodbye :D")
             exit() # Exit the game
         else:
+            # If invalid command
             fancy_text("Invalid command!")
     
-    refresh_display()  # Force update after every action
+    refresh_display()  # Force update after every action so the console stays neat and organised
 
 if __name__ == "__main__":
     main()
