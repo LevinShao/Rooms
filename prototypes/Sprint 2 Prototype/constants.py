@@ -20,11 +20,11 @@ import random
 
 # Entity dictionary
 ENTITIES = {
-    "Tralalero Tralala": {"health_penalty": 10, "spawn_chance": 0.15},
-    "Bombardino Crocodilo": {"health_penalty": 20, "spawn_chance": 0.15},
-    "Brr Brr Patapim": {"health_penalty": 20, "spawn_chance": 0.10},
-    "Boneca Ambalabu": {"health_penalty": 20, "spawn_chance": 0.15},
-    "Tung Tung Tung Sahur": {"health_penalty": 20, "spawn_chance": 0.10}
+    "Tralalero Tralala": {"damage": 5},
+    "Bombardino Crocodilo": {"damage": 10},
+    "Brr Brr Patapim": {"damage": 10},
+    "Boneca Ambalabu": {"damage": 10},
+    "Tung Tung Tung Sahur": {"damage": 5}
 }
 
 # Items dictionary, will add more items soon
