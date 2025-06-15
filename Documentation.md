@@ -988,6 +988,5 @@ Also, I must admit that my plan could be way too complicated. Since I have to pr
 | Lockpick | Useful against locked doors |
 | Crucifix | Can repel some enemies (Sprint 3) |
 
-
 ## UML Class Diagram
 ![UML](/images/UML%20Class%20Diagram.png) 
