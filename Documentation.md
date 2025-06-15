@@ -968,6 +968,8 @@ This, was what I wrote for the same question in Sprint 1's review section. Looki
 ## **Design**
 For the **Player** aspect of my game, there will only be one singular class as the Player, and that will be the player (a bit confusing but what I'm saying is that my game isn't like the other games where the players can be multiple characters/child classes such as **Solider, Soldier, Warrior, Fighter** or **Archer**, the real life player of the game can only play the game as a singular class called **Player**, meaning that there is only one character for this game).
 
+Also, I must admit that my plan could be way too complicated. Since I have to program the entities' behaviours with only around a week left, I might not be able to finish programming for all these entities.
+
 ### **Enemy Roster**
 **NOTE:** None of the entities below can spawn in the following rooms: 000, 049, 050, 051, 052, 099, 100
 | Entity | Behaviour | Counters |
@@ -976,27 +978,16 @@ For the **Player** aspect of my game, there will only be one singular class as t
 | Bombardino Crocodilo | Can spawn in lit rooms. Will rush through the rooms, and the player have to react quickly to hide in a nearby closet in order to survive from him. Will also make the next room dark. | Enter "H" key to hide |
 | Brr Brr Patapim | Can spawn in lit rooms. When he spawns, the current room number the player is in will be replaced by question marks, and when the player tries to progress, they will be met with either 2 or 3 possible rooms, with only one of them being the real door and the other 2 being fake, having Brr Brr Patapim in them. Players cannot go back to the previous room, and they must choose which door they wish to enter. | Players should always memorise the number of their room prior to entering the next room, since the real door should have the number following the current room on them. This would allow the player to know for which door leads to the next room. |
 | Tung Tung Tung Sahur | Can only spawn if the player enters a closet. If the player hides in a closet for way too long, Tung Tung Tung Sahur will damage them and kick them out of the closet, not being able to enter again. | Players should never hide in a closet for too long. If they get out just in time, Tung Tung Tung Sahur will never be able to get them. |
+| Boneca Ambalabu | Can spawn in any room except the ones listed above. The player must react quickly to avoid looking at Boneca Ambalabu. Not reacting quickly will result in a massive loss of health. | Press A to look down |
+
+### **Items Roster**
+| Items | Effects |
+| - | - |
+| Bandage | Heals the user 10 HP (health) |
+| Flashlight | Lets the player see in dark rooms |
+| Lockpick | Useful against locked doors |
+| Crucifix | Can repel some enemies (Sprint 3) |
+
 
 ## UML Class Diagram
 ![UML](/images/UML%20Class%20Diagram.png) 
-
-```
-The lights above flicker as you wake up in an empty, abandoned building. The door creaks in front of you, slightly ajar.
-Dizzy and lightheaded, you get up, go to the window and look at the outside. The heavy rain splash onto the window fiercely as thunder rumbles in the distance.
-You look around scared and confused, but you could not remember when or how you got here, no matter how hard you tried.
-
-But you do know two things - SURVIVE AND ESCAPE.
-
-This is no ordinary building. Rooms shift as you blink.  
-Monsters lurk in the darkness, seeking every chance to catch and kill you.
-A tiny little mistake could end up costing your life.
-But you must keep trying, because beyond Room 100 - is freedom.
-
-Armed with nothing but your fraying sanity, you must navigate 100 rooms of ever-deepening horror.
-This journey will not be easy. You are all on your own.
-As you progress, difficult puzzles and obstacles wait for you. Do you think you got what it takes to escape?
-
-Better hurry up now, the doors won’t stay closed forever...  
-
-Press Enter to begin your nightmare... (or enter H for help) > 
-```
