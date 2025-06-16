@@ -159,8 +159,10 @@ If you aren't familiar with what the game Doors is about (which I'm sure you don
 ### Level 1 Data Flow Diagram
 ![Level 1 DFD](/images/DFDs/Level%201%20DFD.png)
 
-### Gantt Chart
-![Gantt Chart](/images/Gantt%20Chart.png)
+### Gantt Chart (No Milestones Yet)
+No milestones highlighted because this Gantt Chart is made as a start-of-project time management outlook rather than a whole end-of-project review of my time management throughout the task, meaning that this is how I wish my time developing this would be like. This Gantt Chart is made in Sprint 1. For the Gantt Chart which would be made in the foreseeable future that will have milestones lablled on them (since the milestones are supposed to be when I actually completed the sections of the task), I will put it into Sprint 4 as a fully updated end-of-project review.
+
+![Gantt Chart](/images/Gantt%20Charts/Gantt%20Chart.png)
 
 ## **Build and Test**
 **functions.py** - This looks quite long at first glance but I assure you half of it is made up of code comments
@@ -990,3 +992,16 @@ Also, I must admit that my plan could be way too complicated. Since I have to pr
 
 ## UML Class Diagram
 ![UML](/images/UML%20Class%20Diagram.png) 
+
+# **Sprint 4**
+
+## **Design**
+
+## Updated Gantt Chart with Milestones
+As you can see from the Gantt Chart, I have clearly misjudged the difficulty of the **Build and Test** processes of this task. Although Sprint 1 was quite up-to-par with my inital expectations due to the program being quite simple to code thanks to the simplicity of it, everything began to take a dark turn at Sprint 2. The practical process of Sprint 2 was WAY more complicated, and it genuinely robbed me of lots of time due to the long periods of time I have to spend investing and digging into the code, scrolling through thousands of Stack Overflow forums just to develop the program to my expected extent. And when that's finally out of the water, I had to deal with Sprint 3. The theory contents (mainly the review and launch sections) at this point genuinely seemed like a piece of cake to me now, since I could literally get them done in maybe 30 minutes to an hour. What I really was worried about in this stage, the main concern at the top of my head, is the **prac.** As you can see, Sprint 3's **Build and Test** process was around 10000x (not really, just an exaggeration) more difficult than Sprint 2, since I had to add tons of new features into it, and I should've known that if I was struggling this much with Sprint 2, there would be no way I would've even finish Sprint 3 before the due date. That's when the grey thundercloud began to rumble and send lightning strikes in my head. My life literally flashed before my eyes for a second.
+
+But when I actually started Sprint 3 I found out that it's not AS difficult as I expected, because in Sprint 3 we get to work with classes, which allowed me to make my code 10000x (once again an exaggeration) more organized and neat. This actually somehow allowed me to work more efficiently and productively at this code, managing to not spend as long as I had initially predicted in this Sprint. Once we got that done, Sprint 4's **Build and Test** process had went much, much more downhill in terms of difficulty, since when I finished Sprint 3 my program was basically finished. I still did some simple polishing and added some new stuff to it however. And when I finished that, I quickly wrote the final evaluation to finish off the program.
+
+And that, was the story of how I **almost** didn't finish the project before it was due. Pretty cool, right?
+
+![Gantt](/images/Gantt%20Charts/Updated%20Gantt%20Chart.png)
