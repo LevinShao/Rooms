@@ -147,21 +147,18 @@ DARK_ROOM_DESCRIPTIONS = [
 PUZZLES = {
     25: {
         "description": "You see three levers on the wall. Only one opens the path forward.",
-        "solution": random.randint(1, 3),
+        "solution": random.randint(1, 5),
         "hint": "The middle lever looks slightly more worn than the others.",
-        "reward": {"item": "Bandage", "uses": 2}
     },
     50: {
         "description": "A riddle is inscribed on the wall: 'I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?'",
         "solution": "echo",
         "hint": "It's what you hear in mountains and caves.",
-        "reward": {"coins": 20}
     },
     75: {
         "description": "There are four pressure plates on the floor. Step on the correct sequence to proceed.",
         "solution": [2, 4, 1, 3],
         "hint": "The sequence forms a simple pattern.",
-        "reward": {"item": "Lockpick", "uses": 1}
     },
     100: {
         "description": "The final challenge! Solve this math puzzle: What is the sum of the first 10 prime numbers?",

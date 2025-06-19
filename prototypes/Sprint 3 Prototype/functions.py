@@ -501,36 +501,9 @@ class Game:
         # Set time limit for response (3 seconds)
         self.fancy_text("\nYou have 3 seconds to respond!")
         start_time = time.time()
+
+        # The following code is learnt and written from YouTube tutorials
         
-        # For entities where any key works
-        if interaction["success_key"] is None:
-            try:
-                # Non-blocking input approach
-                end_time = start_time + 3
-                while time.time() < end_time:
-                    if msvcrt.kbhit():  # Check if key was pressed
-                        _ = msvcrt.getch()  # Get the key
-                        self.fancy_text(interaction["success_msg"])
-                        room.has_entity = False
-                        return True
-                # Time ran out
-                self.fancy_text("\nTime's up!")
-                self.fancy_text(interaction["fail_msg"])
-                return self.resolve_entity_damage(entity_data)
-            except ImportError:
-                end_time = start_time + 3
-                while time.time() < end_time:
-                    if select.select([sys.stdin], [], [], 0)[0]:
-                        _ = sys.stdin.read(1)
-                        self.fancy_text(interaction["success_msg"])
-                        room.has_entity = False
-                        return True
-                # Time ran out
-                self.fancy_text("\nTime's up!")
-                self.fancy_text(interaction["fail_msg"])
-                return self.resolve_entity_damage(entity_data)
-        
-        # For entities requiring specific key
         try:
             end_time = start_time + 3
             while time.time() < end_time:
@@ -547,6 +520,12 @@ class Game:
             self.fancy_text(interaction["fail_msg"])
             return self.resolve_entity_damage(entity_data)
         except ImportError:
+
+            # Msvcrt is a Windows-based module. Computers running MacOS or Linux would not be able to use Msvcrt, which could result in import errors
+            # So this is directed to specifically computers running these OS systems, since they wouldn't be able to use Msvcrt unless they're on Windows
+            # In this case, we will use sys stdin as a workaround to this issue
+            # The following code works basically the same as to the code above, just modified to fit sys-stdin into the code.
+
             end_time = start_time + 3
             while time.time() < end_time:
                 if select.select([sys.stdin], [], [], 0)[0]:
@@ -563,14 +542,14 @@ class Game:
             return self.resolve_entity_damage(entity_data)
     
     def resolve_entity_damage(self, entity_data):
-        """Resolve entity damage"""
-        damage = entity_data["damage"]
-        self.player.health -= damage
+        """Resolve entity damage with this function"""
+        damage = entity_data["damage"] # Fetch damage
+        self.player.health -= damage # Deduct damage from player HP
         self.fancy_text(f"You lost {damage} HP! (Current HP: {self.player.health})")
         
         if self.player.health <= 0:
-            return False
-        return True
+            return False # If health less than 0, just die.
+        return True # Otherwise keep going
     
     def handle_obstacle(self):
         """
@@ -667,8 +646,9 @@ class Game:
         return True
     
     def loot_room(self):
+        """Loot room function. Part of the user interface and is very important"""
         room = self.rooms[self.current_room]
-        if room.looted:
+        if room.looted: # If room is already looted:
             self.fancy_text("You've already looted this room. You can't seem to find anything else.")
             time.sleep(0.5)
             return
@@ -677,52 +657,56 @@ class Game:
         if self.current_room == self.starlight_room and not self.player.has_item("Starlight Jug"):
             self.fancy_text("\nAmong the items, you find the legendary Starlight Jug!")
             time.sleep(0.5)
-            self.player.add_item("Starlight Jug")
-            room.looted = True
+            self.player.add_item("Starlight Jug") # Add Jug to inventory
+            room.looted = True # Set looted to true
             return
         
         # Guaranteed coins
         coins_found = random.randint(2, 5)
-        self.player.coins += coins_found
+        self.player.coins += coins_found # Add 2-5 coins to inventory
         self.fancy_text(f"\nFound {coins_found} coins!")
         
         # Determine if player gets an item or encounters Peter (mutually exclusive)
         outcome = random.random()
         
         if outcome <= 0.35:  # 35% chance for item
+            # Random item
             item = random.choice(list(ITEMS.keys()))
             # Don't give Starlight Jug as random loot
             while item == "Starlight Jug":
                 item = random.choice(list(ITEMS.keys()))
                 
+            # Add the loot into the player inventory
             self.player.add_item(item)
             self.fancy_text(f"Among the coins, you discover a {item}! ({ITEMS[item]['description']})")
         
-        elif outcome > 0.85:  # 15% chance for Peter (100 - 35 - 50 = 15)
-            damage = random.randint(3, 5)
-            self.player.health -= damage
+        elif outcome > 0.85:  # 15% chance for Peter the Spider to appear and attack
+            damage = random.randint(3, 5) # Random 3-5 damage
+            self.player.health -= damage # Deal damage
             self.fancy_text(f"\nPeter the Spider jumps out and scratches you! (-{damage} HP)")
             self.fancy_text(f"He quickly scurries away into the darkness...")
             self.fancy_text(f"Current HP: {self.player.health}/100")
         
-        room.looted = True
+        room.looted = True # Set room looted to true
         time.sleep(0.5)
-        self.game_data["looted_rooms"].add(self.current_room)
+        self.game_data["looted_rooms"].add(self.current_room) # Add the current room to looted room
     
     def use_item(self):
-        if not self.player.inventory:
+        """Main use item function. Part of user interface and very important"""
+        if not self.player.inventory: # If nothing is in inventory
             self.fancy_text("Your inventory is empty!")
             time.sleep(0.5)
             return
             
-        inventory = self.player.get_consolidated_inventory()
+        inventory = self.player.get_consolidated_inventory() # Fetch player's consolidated inventory
         self.fancy_text("\nAvailable items:")
+        # Loop through each item in the inventory, displaying their name, uses and description
         for i, (name, props) in enumerate(inventory.items(), 1):
             self.fancy_text(f"{i}. {name} x{props['uses']} - {props['description']}")
         
         try:
             choice = int(input("\nSelect item (number) or 0 to cancel: "))
-            if choice == 0:
+            if choice == 0: # Cancel option
                 return
                 
             item_name = list(inventory.keys())[choice-1]
@@ -779,7 +763,6 @@ class Game:
                 try:
                     if int(choice) == puzzle["solution"]:
                         self.fancy_text("The path ahead opens!")
-                        self.give_puzzle_reward(puzzle["reward"])
                         self.game_data["completed_puzzles"].add(room_num)
                         return True
                     else:
