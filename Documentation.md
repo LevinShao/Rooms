@@ -1022,11 +1022,6 @@ I can say that I have fulfilled most of my plans in Sprint 3. In this Sprint, I 
 ## **Design**
 
 ## Updated Gantt Chart with Milestones
-As you can see from the Gantt Chart, I have clearly misjudged the difficulty of the **Build and Test** processes of this task. Although Sprint 1 was quite up-to-par with my inital expectations due to the program being quite simple to code thanks to the simplicity of it, everything began to take a dark turn at Sprint 2. The practical process of Sprint 2 was WAY more complicated, and it genuinely robbed me of lots of time due to the long periods of time I have to spend investing and digging into the code, scrolling through thousands of Stack Overflow forums just to develop the program to my expected extent. And when that's finally out of the water, I had to deal with Sprint 3. The theory contents (mainly the review and launch sections) at this point genuinely seemed like a piece of cake to me now, since I could literally get them done in maybe 30 minutes to an hour. What I really was worried about in this stage, the main concern at the top of my head, is the **prac.** As you can see, Sprint 3's **Build and Test** process was around 10000x (not really, just an exaggeration) more difficult than Sprint 2, since I had to add tons of new features into it, and I should've known that if I was struggling this much with Sprint 2, there would be no way I would've even finish Sprint 3 before the due date. That's when the grey thundercloud began to rumble and send lightning strikes in my head. My life literally flashed before my eyes for a second.
-
-But when I actually started Sprint 3 I found out that it's not AS difficult as I expected, because in Sprint 3 we get to work with classes, which allowed me to make my code 10000x (once again an exaggeration) more organized and neat. This actually somehow allowed me to work more efficiently and productively at this code, managing to not spend as long as I had initially predicted in this Sprint. Once we got that done, Sprint 4's **Build and Test** process had went much, much more downhill in terms of difficulty, since when I finished Sprint 3 my program was basically finished. I still did some simple polishing and added some new stuff to it however. And when I finished that, I quickly wrote the final evaluation to finish off the program.
-
-And that, was the story of how I **almost** didn't finish the project before it was due. Pretty cool, right?
 
 ![Gantt](/images/Gantt%20Charts/Updated%20Gantt%20Chart.png)
 
@@ -1037,7 +1032,7 @@ And that, was the story of how I **almost** didn't finish the project before it 
 ## Peer Evaluation
 
 ### Peer 1: Ronen Gupta
-| Plus | Minus | Interesting |
+| Plus | Minus | Implications |
 | - | - | - |
 | Nice gameplay flow | Some minor bugs in the text, such as some lines being written in the wrong order | Levin's Shop at Room 052 is very interesting |
 | Good use of different enemies and rooms | It is a little repetitive pressing W and L to get coins and going forward but I can understand why | The item "Starlight Jug" is also very interesting
@@ -1048,9 +1043,43 @@ And that, was the story of how I **almost** didn't finish the project before it 
 A quite good OOP game I must admit, Levin! Text-based and also eerie in a way, presenting the player with a good idea of what to do and expect. It can be a little less repetitive with more variety in gameplay as it is text-based and can be leveraged easier, but it is an excellent effort! Well done, Levin!
 
 ### Peer 2: Victor Guo
-| Plus | Minus | Interesting |
+| Plus | Minus | Implications |
 | - | - | - |
 | The game performs well, although it is a text-based game, so the performance would generally be better | The character teleports to the next room when damage is taken rather than staying in the room in which damage was dealt | The fancy_text functiion gives the game a unique aesthetic similar to an animated command line |
 
 #### Final Feedback from Victor Guo:
 Levin's text-based game "Rooms" integrates many of his requirements that he has outlined, while implementing a fancy_text function to enhance the user experience. When the player takes damage, they are automatically moved to the next room; however, the user may find this illogical and suggest it should be fixed. Overall, a well-crafted game with its own unique aesthetic.
+
+## Evaluation of System
+
+1. **Explain how you could improve your system in future updates. Analyse the impact these updates could have on the user experience.**
+
+To improve my system in future updates, first of all, I could implement new classes that handles different functions within each room that the player enters. Right now, the **Game** class is everything. It basically carries the most important functions within my game, and not to mention that there are a ton of these functions. I could sort out the Game class by separating its functions into mini-classes. Then, I could create more interesting experiences for the player as they explore throughout the rooms. As Ronen Gupta had commented in the peer review, my game is currently way too repetitive and delivers little challenges. This makes me think that I could make my game more challenging and spike up the difficulty meter.
+
+I feel like these changes really wouldn't matter when we go into a player-based perspective. First of all, as long as none of the major functions are impacted by changes that decrease their functionality, I don't think there would be any changes to the game itself if we are just sorting out the background while maintaining the existing functions. Also, if we want to create more interesting experiences for the player and spiking up the difficulty for the game, I don't think players would dislike this change, but rather they would like it, because sure, the difficulty would be ramped up by a lot, making it harder to beat the game, but the game being easy right now is what makes it boring. Adding this change could make the game less repetitive, and actually make it challenging, which is what every game needs.
+
+2. **Evaluate the system in terms of how well it meets the requirements and specifications.**
+
+Overall, I felt like my final product managed to meet my requirements and specifications quite well. I gotta admit that the final product was not up to my expectations, but it's also reasonable because I had severely overestimated my programming skills when I was planning the system flow of the game. Although the system is quite underwhelming with a lot of bugs present, it still was up-tp-par with my requirements and specifications, however. For example, my system can at least send out data to the player, which already satisfies a functional requirement. Not only this, my program is quite simple to understand and use, and requires little equipment in order to run it. My program doesn't crash or freeze the system, and is very optimized as well. There is planned user interaction between objects, and the core features still remain at where they are. Also, a really good trait of my current system is that it can easily handle errors, returning error messages to players whenever they make a mistake. In summary, my program still suits my original requirements and specifications even though it was not up to my previous expectations.
+
+3. **Evaluate your processes in terms of project management.**
+
+As you can see from the Gantt Chart, I have clearly misjudged the difficulty of the **Build and Test** processes of this task. Although Sprint 1 was quite up-to-par with my inital expectations due to the program being quite simple to code thanks to the simplicity of it, everything began to take a dark turn at Sprint 2. The practical process of Sprint 2 was WAY more complicated, and it genuinely robbed me of lots of time due to the long periods of time I have to spend investing and digging into the code, scrolling through thousands of Stack Overflow forums just to develop the program to my expected extent. And when that's finally out of the water, I had to deal with Sprint 3. The theory contents (mainly the review and launch sections) at this point genuinely seemed like a piece of cake to me now, since I could literally get them done in maybe 30 minutes to an hour. What I really was worried about in this stage, the main concern at the top of my head, is the **prac.** As you can see, Sprint 3's **Build and Test** process was around 10000x (not really, just an exaggeration) more difficult than Sprint 2, since I had to add tons of new features into it, and I should've known that if I was struggling this much with Sprint 2, there would be no way I would've even finish Sprint 3 before the due date. That's when the grey thundercloud began to rumble and send lightning strikes in my head. My life literally flashed before my eyes for a second.
+
+But when I actually started Sprint 3 I found out that it's not AS difficult as I expected, because in Sprint 3 we get to work with classes, which allowed me to make my code 10000x (once again an exaggeration) more organized and neat. This actually somehow allowed me to work more efficiently and productively at this code, managing to not spend as long as I had initially predicted in this Sprint. Once we got that done, Sprint 4's **Build and Test** process had went much, much more downhill in terms of difficulty, since when I finished Sprint 3 my program was basically finished. I still did some simple polishing and added some new stuff to it however. And when I finished that, I quickly wrote the final evaluation to finish off the program.
+
+And that, was the story of how I **almost** didn't finish the project before it was due. Pretty cool, right?
+
+**TL; DR:** Sprint 3 sucks, and I feel like my brain aged by 50 years after I finished it.
+
+4. **Gather feedback from at least two peers on meeting of functional and non-functional specifications.**
+
+The PMI tables are up there, so now I'm going to review their reviews and go through each of them thoroughly. Let's start with Ronen Gupta's review.
+
+- **Positives: nice gameplay flow, nice use of enemies and rooms, many items, nice text effects**
+
+    Why thanks Ronen Gupta! I gotta admit that since enemies, items and gameplay matters more than anything in my game, I did spend a lot of time on them, and after I added them I've also done careful playtesting to ensure that everything works to my expectations. I've also received multiple compliments about the text effect, which is also very nice! Thank you all! I gotta admit this text effect works really well for the game, giving players a sense of suspense as they progress throughout the rooms.
+
+- **Negatives: Some minor bugs in the text, a bit too repetitive**
+
+    These negatives matter to me way more than positives, because who would care about the positives more than the negatives unless you are an optimistic person and I'm... not? Maybe? Anyway, to Mr Ronen Gupta, I would like to thoroughly apologize that you did not enjoy my game as much due to these errors. I gotta admit, I am not a professional coder, so it's a bit hard for me to literally havbe to find every single bug in the game, then come up with a solution to fix them. Also, I gotta admit that I've already fixed around 80% of the bugs in the game, and Mr Gupta had just managed to come across the rare 20%. I will definitely fix these bugs in the near future. In terms of repetition, I gotta agree myself, but there's really not much I can do about it since you literally gotta move forward to Room 100 in order to beat the game. That's how the game and the system flow works!
