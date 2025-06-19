@@ -993,6 +993,30 @@ Also, I must admit that my plan could be way too complicated. Since I have to pr
 ## UML Class Diagram
 ![UML](/images/UML%20Class%20Diagram.png) 
 
+## **End of Sprint 3 - Review Questions**
+
+### Evaluate how effectively your project meets the functional and non-functional requirements defined in your planning.
+* Refer to specific criteria or expectations outlined in your requirements document.
+
+Throughout the entire development process of this project, I think I have always, always achieved decent standards in terms of both functional and non-functional requirements. During the development of Sprint 3, I have always prioritised the functional and non-functional requirements. In Sprint 3, the system continues to be able to retrieve data for the players even though they have underwent massive changes due to the introduction of classes. Also, despite adding a ton of new features, I still believe that my user interface is simple and understandable enough for an average user to understand it. Furthermore, the system can successfully display data to the user, such as when entities appear in a room, the system can tell the player what's happening and give users clear instructions on how to handle them.
+
+In terms of the non-functional requirements, the same can pretty much also be said. The system works clear and efficient enough to excel in the performance factor. Also, the system successfully displays reliable information, because the system doesn't carry any bugs (at least not to the extent as I can tell from my limited playtesting) and successfully receives player input, such as when during entities and obstacles spawn. Lastly, the system is also perfectly usable and accessible, since it's designed to be a game that anyone on any device can play. Not only is the system easy-to-run-and-understand, it's also quite accessible because it can literally be used within Visual Studio Code.
+
+### Analyse the performance of your program against the key use-cases you identified.
+* Discuss whether the program behaves as expected and handles input/output as planned.
+
+The program behaves very much as expected and can clearly handle player input and system output as planned. One of the best examples of this is the entity system. When Bombardino Crocodilo is coming, the player can use the H key to hide from him, and the system will then output their survival message and deal no damage loss to the player. However, if the player uses any other key to attempt survival from Bombardino, then the program can INSTANTLY detect that, then tell the player that they have selected the wrong key, which meant they didn't hide from Bombardino, therefore dealing a substantial amount of damage to the player. Also, if the player doesn't respond at all, then the program can use Python's inbuilt **Time** module to detect their inactivity, therefore also dealing damage to the player since they didn't respond. Nevertheless, I gotta admit my system is very well structured when it comes to input and output handling! Lastly, the performance of my program still fits within the criteria of my expectations as listed in the use case diagrams.
+
+### Assess the quality of your code in terms of readability, structure, and maintainability.
+* Consider naming conventions, use of functions, comments, and overall organisation.
+
+Okay, so Sprint 3 is a MASSIVE update as anyone can tell. The code length in the major file **functions.py** has almost doubled its previous amount in Sprint 2, and this was all because of the tons of things I added in Sprint 3. The constants.py file now has more descriptive sets and lists, giving more properties to entities and items alike, as well as introducing new sets called **obstacles, puzzles and special rooms** meaning that the new code has essentially became way more complex than before. However, I've tried to format the code as neat as possible, making it still look readable and can easy be configured any time. In functions.py, I have tried to organise my code by sorting them into 3 classes: **Player, Room** and **Game.** The player class contains all the player-related functions such as item usage and inventory controls. The room class contains the basic code for room configuration as well as entity and obstacle spawning. I feel like that although I have almost 700 lines of code in functions.py at the stage of Sprint 3, the code is still very structured and maintainable since they have been greatly optimized as well as sorted into classes, making changes easier. (700 lines of code is really nothing for a game like this since I've worked on way bigger projects with friends before, even at some point becoming the programmer of a Roblox game in a collaborative project). In Sprint 3, **main.py** has barely changed, so I still consider it as very readable, structured and maintainable. Lastly, I've used plenty of code comments and DocStrings for each function, although making it look more messy and clustered, it really does help with explaining the code, it really does.
+
+### Explain the improvements that should be made in the next stage of development.
+* Include both feature enhancements and refinements to code quality or structure.
+
+I can say that I have fulfilled most of my plans in Sprint 3. In this Sprint, I have successfully implemented many advanced functions into the program, such as obstacles alongside with updates for the current existing entities, as well as puzzles every 25 rooms. Also, the Levin's shop, needless to say, is an excellent feature that I've managed to add into the system, with lots of work and research as well as help from all people alike. I've also reworked the game's introduction and outro, making them more atmospheric and exciting, and added more room descriptions because I felt like 5 was way too less. Anyways, gotta say I did a great job in Sprint 3. However, in Sprint 4, I might begin the polishing process, with refinements on several sections of the code, as well as thorough bugfixing and playtesting, then updating anything that could be deemed unfun or unfair for the player. In shorter terms, Sprint 4 will just be updates on Sprint 3's code with major polishing, tiny changes in the code and thorough bugfixing. So happy!!! 
+
 # **Sprint 4**
 
 ## **Design**
@@ -1005,3 +1029,28 @@ But when I actually started Sprint 3 I found out that it's not AS difficult as I
 And that, was the story of how I **almost** didn't finish the project before it was due. Pretty cool, right?
 
 ![Gantt](/images/Gantt%20Charts/Updated%20Gantt%20Chart.png)
+
+## Updated Structure Chart with Classes
+
+![Gantt](/images/Structure%20Charts/Updated%20Structure%20Chart.png)
+
+## Peer Evaluation
+
+### Peer 1: Ronen Gupta
+| Plus | Minus | Interesting |
+| - | - | - |
+| Nice gameplay flow | Some minor bugs in the text, such as some lines being written in the wrong order | Levin's Shop at Room 052 is very interesting |
+| Good use of different enemies and rooms | It is a little repetitive pressing W and L to get coins and going forward but I can understand why | The item "Starlight Jug" is also very interesting
+| Many items | | You can survive from entities by just pressing that key without having to press enter afterwards |
+| Nice text effects | | Room generation is excellently done |
+
+#### Final Feedback from Ronen Gupta:
+A quite good OOP game I must admit, Levin! Text-based and also eerie in a way, presenting the player with a good idea of what to do and expect. It can be a little less repetitive with more variety in gameplay as it is text-based and can be leveraged easier, but it is an excellent effort! Well done, Levin!
+
+### Peer 2: Victor Guo
+| Plus | Minus | Interesting |
+| - | - | - |
+| The game performs well, although it is a text-based game, so the performance would generally be better | The character teleports to the next room when damage is taken rather than staying in the room in which damage was dealt | The fancy_text functiion gives the game a unique aesthetic similar to an animated command line |
+
+#### Final Feedback from Victor Guo:
+Levin's text-based game "Rooms" integrates many of his requirements that he has outlined, while implementing a fancy_text function to enhance the user experience. When the player takes damage, they are automatically moved to the next room; however, the user may find this illogical and suggest it should be fixed. Overall, a well-crafted game with its own unique aesthetic.

@@ -60,8 +60,8 @@ def move_forward() -> str:
         current_room += 1 # Increment the room number by 1 every time the player moves forward
         # Mark room as visited when moving forward
         game_data["visited_rooms"].add(current_room)
-        # Round the room number to 3 digits as a form of convention from the original Doors game
-        fancy_text(f"Moved forward to Room {current_room:03d}.")
+        # Round the room number to 4 digits as a form of convention from the original Doors game
+        fancy_text(f"Moved forward to Room {current_room:04d}.")
         time.sleep(0.5) # Short pause so the player can read the message properly
         print("\033c", end="") # Clear the console screen for a fresh look
         return ""
@@ -86,8 +86,8 @@ def move_backward() -> str:
     if current_room > 0:
         current_room -= 1 # Decrement the room number by 1 every time the player moves backward
         # No need to mark as visited here since forward movement already did it
-        # Round the room number to 3 digits as a form of convention from the original Doors game
-        fancy_text(f"Moved backward to Room {current_room:03d}.")
+        # Round the room number to 4 digits as a form of convention from the original Doors game
+        fancy_text(f"Moved backward to Room {current_room:04d}.")
         time.sleep(0.5) # Short pause so the player can read the message properly
         print("\033c", end="") # Clear the console screen for a fresh look
         return ""
@@ -110,7 +110,7 @@ def get_room_description() -> str:
         return f"⚠️  DARK ROOM: {get_dark_room_description()}"
     else: # For every single other room, select a random description from the ROOM_TYPES list.
         random.seed(current_room)
-        return f"Room {current_room:03d}: {random.choice(ROOM_TYPES)}"
+        return f"Room {current_room:04d}: {random.choice(ROOM_TYPES)}"
     
 def generate_dark_rooms():
     """Randomly assigns dark rooms for the run."""
@@ -298,6 +298,7 @@ def use_item() -> str:
             
         # The lockpick is currently useless because I wasn't able to implement a locked door event at this stage
         # In later versions they will be very useful, but for now they are just a placeholder
+        # The code for the lockpick is only an experiment. I'll see if it works. If it does, it might also go in Sprints 3 and 4
 
         elif item_name == "Lockpick":
             if random.random() <= 0.5:
@@ -323,7 +324,7 @@ def use_item() -> str:
 def show_status(): # Show the player's current status, including room number, health, coins, and inventory
     """Display the player's current progress in the game."""
     # The option bar right here
-    fancy_text(f"Room: {current_room:03d} | HP: {player_health}/100 | Coins: {coins}")
+    fancy_text(f"Room: {current_room:04d} | HP: {player_health}/100 | Coins: {coins}")
     # Show the player inventory
     if inventory: # If there are anything in the inventory
         # Group identical items for display

@@ -52,8 +52,8 @@ def get_room_description() -> str:
     else: # For every single other room, select a random description from the ROOM_TYPES list.
         # Seed the random generator with room number for consistent descriptions
         random.seed(current_room)
-        # First round the room number to 3 digits as a form of convention from the original Doors game, then return the randomly generaated description
-        return f"Room {current_room:03d}: {random.choice(ROOM_TYPES)}"
+        # First round the room number to 4 digits as a form of convention from the original Doors game, then return the randomly generaated description
+        return f"Room {current_room:04d}: {random.choice(ROOM_TYPES)}"
 
 # In this case, the expected return type of the get_room_description function is an integer, hence the "-> int" at the end of the function definition.
 def get_current_room() -> int:
@@ -69,7 +69,7 @@ def move_forward() -> str:
     # Normal movement logic for Room 000 to Room 099
     if current_room < 100:
         current_room += 1 # Increment the room number by 1 every time the player moves forward
-        fancy_text(f"Moved forward to Room {current_room:03d}.") # Round the room number to 3 digits as a form of convention from the original Doors game
+        fancy_text(f"Moved forward to Room {current_room:04d}.") # Round the room number to 4 digits as a form of convention from the original Doors game
         time.sleep(0.5) # Short pause so the player can read the message properly
         print("\033c", end="") # Clear the console screen for a fresh look
         return ""
@@ -105,7 +105,7 @@ def move_backward() -> str:
     # If the player is not in Room 000, which is the entrance room, allow them to move backward
     if current_room > 0:
         current_room -= 1 # Decrement the room number by 1 every time the player moves backward
-        message = f"Moved backward to Room {current_room:03d}." # Round the room number to 3 digits as a form of convention from the original Doors game
+        message = f"Moved backward to Room {current_room:04d}." # Round the room number to 4 digits as a form of convention from the original Doors game
         fancy_text(message)
         time.sleep(0.5) # Short pause so the player can read the message properly
         print("\033c", end="") # Clear the console screen for a fresh look
