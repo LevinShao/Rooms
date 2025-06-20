@@ -32,7 +32,7 @@ ENTITIES = {
     "Tung Tung Tung Sahur": {
         "damage": 10, 
         "interaction": {
-            "prompt": "Stay still! Don't press anything for 2 seconds",
+            "prompt": "Stay still! Don't press anything for 5 seconds",
             "success_key": None,  # Special timing-based interaction
             "success_msg": "You remained still and survived!",
             "fail_msg": "You moved and attracted Tung Tung Tung Sahur!"
@@ -146,25 +146,24 @@ DARK_ROOM_DESCRIPTIONS = [
 # Special room puzzles
 PUZZLES = {
     25: {
-        "description": "You see three levers on the wall. Only one opens the path forward.",
+        "description": "You see five levers on the wall. Only one opens the path forward.",
         "solution": random.randint(1, 5),
-        "hint": "The middle lever looks slightly more worn than the others.",
+        "hint": "Some levers can be dangerous. Choose wisely!"
     },
     50: {
         "description": "A riddle is inscribed on the wall: 'I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?'",
         "solution": "echo",
-        "hint": "It's what you hear in mountains and caves.",
+        "hint": "It's what you hear in mountains and caves."
     },
     75: {
         "description": "There are four pressure plates on the floor. Step on the correct sequence to proceed.",
         "solution": [2, 4, 1, 3],
-        "hint": "The sequence forms a simple pattern.",
+        "hint": "The sequence forms a simple pattern."
     },
     100: {
         "description": "The final challenge! Solve this math puzzle: What is the sum of the first 10 prime numbers?",
         "solution": 129,
-        "hint": "The primes are: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29",
-        "reward": {"victory": True}
+        "hint": "The primes are: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29"
     }
 }
 
@@ -197,7 +196,7 @@ SPECIAL_ROOMS = {
 
 # In constants.py, remove Brr Brr Patapim from ENTITIES and add:
 DUPLICATED_ROOMS_EVENT = {
-    "description": "The room number is obscured... something feels wrong here.",
+    "description": "The room number is obscured... something feels wrong here. Very wrong indeed.",
     "consequence": {
         "damage": 10,
         "message": "Brr Brr Patapim attacks you from the fake door!"

@@ -161,28 +161,31 @@ class Room:
         if (self.is_special or self.is_puzzle or self.number in (0, 100)):
             return False # Once again we wanna return false for any of the rooms listed above
         self.has_duplicated_rooms = True
-        self.game_data["event_spawned_rooms"].add(self.number)
+        self.game_data["event_spawned_rooms"].add(self.number) # Add current room to event spawned list
 
     @staticmethod
+    # A static method is a method that belongs to a class but does not operate on instances of that class. 
+    # It does not require a reference to the instance (self) or the class (cls) as its first parameter. 
     def get_room_description(self, game):
         """Generate room types that will persist for the entire game"""
         room_types = {}
         for room_number in range(101):
-            if room_number == 0:
+            if room_number == 0: # Room 0000
                 room_types[0] = "Reception Area: A creaky wooden door behind you."
-            elif room_number == 100:
+            elif room_number == 100: # Room 0100
                 room_types[100] = "You stumble into the outside, seeing a massive gate covered in angelic symbols in front of you."
-            elif room_number in SPECIAL_ROOMS:
+            elif room_number in SPECIAL_ROOMS: # Special room
                 room_types[room_number] = SPECIAL_ROOMS[room_number]["description"]
-            elif room_number in PUZZLES:
+            elif room_number in PUZZLES: # Puzzle room
                 room_types[room_number] = f"Room {room_number:04d}: {PUZZLES[room_number]['description']}"
-            elif room_number in self.game_data["dark_rooms"]:
+            elif room_number in self.game_data["dark_rooms"]: # Dark room
                 room_types[room_number] = f"⚠️  DARK ROOM: {random.choice(DARK_ROOM_DESCRIPTIONS)}"
-            elif room_number == game.starlight_room:
+            elif room_number == game.starlight_room: # Starlight room
                 room_types[room_number] = f"💫  STARLIGHT ROOM: This room glows with golden light. Maybe a good idea to loot?"
-            else:
+            else: # Any other normal room
                 room_types[room_number] = f"Room {room_number:04d}: {random.choice(ROOM_TYPES)}"
         return room_types
+        # Also, round every room number to 4 d.p. as a convention to the original Doors game
     
     def handle_duplicated_rooms(self, game):
         """
@@ -324,34 +327,37 @@ class Game:
     
     def generate_starlight_room(self):
         """Generate a random room for the Starlight Jug"""
+        # Rooms where Starlight Jug cannot appear (special rooms and puzzle rooms)
         excluded_rooms = {0, 25, 49, 50, 51, 52, 75, 99, 100}
+        # All possible rooms between 1-99 that aren't excluded
         possible_rooms = [r for r in range(1, 100) if r not in excluded_rooms]
+        # Randomly select one room from possible candidates
         return random.choice(possible_rooms)
     
     def move_forward(self):
         """Basic function for moving forward"""
         room = self.rooms[self.current_room]
         
-        if room.has_duplicated_rooms:
-            result = room.handle_duplicated_rooms(self)
+        if room.has_duplicated_rooms: # If the room has the duplicated rooms event
+            result = room.handle_duplicated_rooms(self) # Call the handle dupe rooms function to handle dupe rooms
             if result is None:  # Player died
                 return False
-            self.current_room = result
-            self.game_data["visited_rooms"].add(self.current_room)
-            self.fancy_text(f"Moved forward to Room {self.current_room:04d}.")
-            time.sleep(0.5)
-            self.enter_room()
+            self.current_room = result # Dupe rooms process
+            self.game_data["visited_rooms"].add(self.current_room) # Add room into visited rooms list
+            self.fancy_text(f"Moved forward to Room {self.current_room:04d}.") # 4 d.p.
+            time.sleep(0.5) # Short pause
+            self.enter_room() # Enter new room by using enter room function
             return True
         
-        if self.current_room < 100:
-            next_room = self.current_room + 1
+        if self.current_room < 100: # If the room is just a normal room
+            next_room = self.current_room + 1 # Progression by adding 1. For example, Room 0045 --> Room 0046
             self.current_room = next_room
-            self.game_data["visited_rooms"].add(self.current_room)
+            self.game_data["visited_rooms"].add(self.current_room) # Mark visited
             self.fancy_text(f"Moved forward to Room {self.current_room:04d}.")
             time.sleep(0.5)
             self.enter_room()
             return True
-        else:
+        else: # IF THE PLAYER BEATS THE GAME
             outro_text = (
                 "\nYou've reached the exit beyond Room 100!\n"
                 "Congratulations! You've beaten the game!\n\n"
@@ -362,16 +368,18 @@ class Game:
             return False
     
     def move_backward(self):
-        if self.current_room > 0:
+        """Basic function for moving backward"""
+        if self.current_room > 0: 
+            # If in a room that's not 0 then decrease room number by 1 every time player goes back
             self.current_room -= 1
             self.fancy_text(f"Moved backward to Room {self.current_room:04d}.")
             time.sleep(0.5)
             self.enter_room()
             return True
-        else:
+        else: # For Room 0000
             self.fancy_text("The door behind you is blocked. You can't turn back now.")
             time.sleep(0.5)
-            return False
+            return False # Mark as false because player won't be allowed to move back
     
     def enter_room(self):
         """A very important function to handle stuff when player enters new room"""
@@ -396,7 +404,7 @@ class Game:
             
             spawn_roll = random.random() # Will decide if an entity/obstacle/room event will spawn
 
-            if room.is_dark:
+            if room.is_dark: # Dark rooms
                 if spawn_roll < 0.60:
                     # Try different spawns with adjusted probabilities
                     spawn_roll2 = random.random()
@@ -406,7 +414,7 @@ class Game:
                         room.spawn_entity()
                     else:  # 20% obstacles (80-100)
                         room.spawn_obstacle()
-            elif self.current_room >= 90:
+            elif self.current_room >= 90: # Rooms after 0089
                 if spawn_roll < 0.50:
                     spawn_roll2B = random.random()
                     if spawn_roll2B < 0.10:  # 10% duplicated rooms
@@ -415,7 +423,7 @@ class Game:
                         room.spawn_entity()
                     else:  # 30% obstacles (70-100)
                         room.spawn_obstacle()
-            else:
+            else: # 0001-0089 that's not a dark room, puzzle or special rooms
                 if spawn_roll < 0.30:
                     spawn_roll2C = random.random()
                     if spawn_roll2C < 0.30:  # 30% duplicated rooms
@@ -434,58 +442,64 @@ class Game:
             self.fancy_text("\nThis is a safe room to prepare for the upcoming puzzle.")
         
         elif room_num == 51:  # Throne room
-            if not self.player.special_room_visited and random.random() < room_data.get("special_item_chance", 0):
+            if not self.player.special_room_visited and random.random() < room_data.get("special_item_chance", 0): # Find a rare item in the throne room
                 self.fancy_text("\nYou found a rare item in the throne room!")
-                self.player.add_item(random.choice(list(ITEMS.keys())))
-                self.player.special_room_visited = True
+                self.player.add_item(random.choice(list(ITEMS.keys()))) # Plot twist: the item is not rare at all (it's literally just a random common item)
+                self.player.special_room_visited = True # Mark special rooms as true
         
         elif room_num == 52:  # Levin's Shop
             self.visit_shop()
         
         elif room_num == 99:  # Final preparation room
-            heal_amount = room_data.get("heal_amount", 0)
-            self.player.heal(heal_amount)
-            self.fancy_text(f"\nYou feel refreshed! +{heal_amount} HP")
+            heal_amount = room_data.get("heal_amount", 0) # Fetch the heal amount from the room data
+            self.player.heal(heal_amount) # Heal fuunction
+            self.fancy_text(f"\nYou feel refreshed! +{heal_amount} HP") # Immediately heal player up when they reach room 0099 as a reward for getting that far
     
     def visit_shop(self):
         """
         Function to handle Levin's Shop
         
-        This code was ripped off from the economy game of a Discord bot I made in Python a few years prior.
+        This code was ripped off from the economy game function of a Discord bot I made in Python a few years prior.
         """
         self.fancy_text("\nWelcome to Levin's Shop!")
-        self.fancy_text(f"Your coins: {self.player.coins}")
+        self.fancy_text(f"Your coins: {self.player.coins}") # Retrieve coin amount from player class
         
         shop_items = SPECIAL_ROOMS[52]["shop_items"]
         while True:
-            self.fancy_text("\nAvailable items:")
-            for i, (item, price) in enumerate(shop_items.items(), 1):
+            self.fancy_text("\nAvailable items:") # Display all items
+            for i, (item, price) in enumerate(shop_items.items(), 1): 
+                # Loop through each available item in the shop
+                # Display their item name and price as well as description
                 self.fancy_text(f"{i}. {item} - {price} coins ({ITEMS[item]['description']})")
             
-            self.fancy_text("0. Exit shop")
+            self.fancy_text("0. Exit shop") # Exit
             
             try:
                 choice = int(input("\nWhat would you like to buy? "))
                 if choice == 0:
-                    break
+                    break # Exit function
                 
+                # Convert the shop's item keys to a list and using the player's choice (minus one, since lists are zero-indexed) to get the correct item.
                 item_name = list(shop_items.keys())[choice-1]
                 price = shop_items[item_name]
                 
+                # If the player has enough coins, the item's price is subtracted from their coin total, the item is added to their inventory
                 if self.player.coins >= price:
                     self.player.coins -= price
                     self.player.add_item(item_name)
                     self.fancy_text(f"You bought {item_name}!")
                 else:
-                    self.fancy_text("Not enough coins!")
+                    self.fancy_text("Not enough coins!") # Not enough coins
             except (ValueError, IndexError):
-                self.fancy_text("Invalid choice!")
-    
+                self.fancy_text("Invalid choice!") # Error handler for invalid inputs
+
     def handle_entity_encounter(self):
+        """Main function for handling entity encounters"""
         room = self.rooms[self.current_room]
         if not room.has_entity:
-            return True
+            return True # Return true if room has entity
             
+        # Entity variables
         entity_name = room.entity
         entity_data = ENTITIES[entity_name]
         interaction = entity_data["interaction"]
@@ -493,19 +507,44 @@ class Game:
         self.fancy_text(f"\nOh no! {entity_name} appears!")
         self.fancy_text(interaction["prompt"])
         
-        # Special case for Tung Tung Tung Sahur (timing-based)
+        # Special case for Tung Sahur (timing-based)
         if entity_name == "Tung Tung Tung Sahur":
             start_time = time.time()
-            input()  # Wait for any key press
-            elapsed = time.time() - start_time
-            if elapsed >= 2:
+            end_time = start_time + 5  # 5 second challenge
+            
+            try:
+                # Windows version using msvcrt
+                while time.time() < end_time:
+                    if msvcrt.kbhit():  # If any key was pressed
+                        _ = msvcrt.getch()  # Clear the keypress
+                        self.fancy_text(interaction["fail_msg"])
+                        return self.resolve_entity_damage(entity_data)
+                    
+                # If we get here, no keys were pressed
                 self.fancy_text(interaction["success_msg"])
                 room.has_entity = False
                 return True
-            else:
-                self.fancy_text(interaction["fail_msg"])
-                return self.resolve_entity_damage(entity_data)
+            except ImportError:
+
+                # Msvcrt is a Windows-based module. Computers running MacOS or Linux would not be able to use Msvcrt, which could result in import errors
+                # So this is directed to specifically computers running these OS systems, since they wouldn't be able to use Msvcrt unless they're on Windows
+                # In this case, we will use sys stdin as a workaround to this issue
+                # The following code works basically the same as to the code above, just modified to fit sys-stdin into the code.
+
+                # Unix version using sys and select
+                while time.time() < end_time:
+                    if select.select([sys.stdin], [], [], 0)[0]: # this code was kind of copied from Stack Overflow but anyways
+                        _ = sys.stdin.read(1)  # Clear the keypress
+                        self.fancy_text(interaction["fail_msg"])
+                        return self.resolve_entity_damage(entity_data)
+                    
+                # If we get here, no keys were pressed
+                self.fancy_text(interaction["success_msg"])
+                room.has_entity = False
+                return True
         
+        # NOW FOR ANY ENTITY THAT IS NOT TUNG SAHUR
+
         # Set time limit for response (3 seconds)
         self.fancy_text("\nYou have 3 seconds to respond!")
         start_time = time.time()
@@ -513,6 +552,7 @@ class Game:
         # The following code is learnt and written from YouTube tutorials
         
         try:
+            # For Windows
             end_time = start_time + 3
             while time.time() < end_time:
                 if msvcrt.kbhit():  # Check if key was pressed
@@ -528,15 +568,10 @@ class Game:
             self.fancy_text(interaction["fail_msg"])
             return self.resolve_entity_damage(entity_data)
         except ImportError:
-
-            # Msvcrt is a Windows-based module. Computers running MacOS or Linux would not be able to use Msvcrt, which could result in import errors
-            # So this is directed to specifically computers running these OS systems, since they wouldn't be able to use Msvcrt unless they're on Windows
-            # In this case, we will use sys stdin as a workaround to this issue
-            # The following code works basically the same as to the code above, just modified to fit sys-stdin into the code.
-
+            # Unix/non-Windows OS (sys and select instead of msvcrt)
             end_time = start_time + 3
             while time.time() < end_time:
-                if select.select([sys.stdin], [], [], 0)[0]:
+                if select.select([sys.stdin], [], [], 0)[0]: # Copied off internet my bad
                     user_input = sys.stdin.read(1).lower()
                     if user_input == interaction["success_key"]:
                         self.fancy_text(interaction["success_msg"])
@@ -547,7 +582,7 @@ class Game:
             # Time ran out or wrong key
             self.fancy_text("\nTime's up or wrong key!")
             self.fancy_text(interaction["fail_msg"])
-            return self.resolve_entity_damage(entity_data)
+            return self.resolve_entity_damage(entity_data) # Resolve entity damage
     
     def resolve_entity_damage(self, entity_data):
         """Resolve entity damage with this function"""
@@ -617,6 +652,7 @@ class Game:
     
     def resolve_obstacle_outcome(self, option_name, outcome):
         # Check for item requirement first
+        # This part is specifically for lockpicks against locked-door obstacle
         if "item_required" in outcome:
             if not self.player.has_item(outcome["item_required"]):
                 self.fancy_text(f"You need a {outcome['item_required']}!")
@@ -630,21 +666,24 @@ class Game:
                 self.fancy_text(outcome["success"])
                 
                 # Special case for finding key
+                # Not up to my expectations for this part but had to go like this because I was running out of time
+                # And this was the easiest to code as well
                 if option_name == "Search for key" and outcome["success"] == "You found a key!":
                     self.player.add_item("Key")
                 return True
             else:
+                # Fail scenario
                 self.fancy_text(outcome["fail"])
                 if "damage" in outcome:
-                    return self.player.take_damage(outcome["damage"])
+                    return self.player.take_damage(outcome["damage"]) # Take damage
                 return True
         
         # Handle time cost outcomes
         if "time_cost" in outcome:
-            self.fancy_text(outcome["time_cost"])
+            self.fancy_text(outcome["time_cost"]) # Another fail scenario right here
             if "coin_loss" in outcome:
-                loss = random.randint(*outcome["coin_loss"])
-                self.player.coins = max(0, self.player.coins - loss)
+                loss = random.randint(*outcome["coin_loss"]) # Lose some coins as the fail scenario
+                self.player.coins = max(0, self.player.coins - loss) # Player's coins after coin loss cannot go below 0
                 self.fancy_text(f"Lost {loss} coins!")
         
         # Handle damage from actions
@@ -698,7 +737,7 @@ class Game:
         room.looted = True # Set room looted to true
         time.sleep(0.5)
         self.game_data["looted_rooms"].add(self.current_room) # Add the current room to looted room
-    
+
     def use_item(self):
         """Main use item function. Part of user interface and very important"""
         if not self.player.inventory: # If nothing is in inventory
@@ -706,85 +745,103 @@ class Game:
             time.sleep(0.5)
             return
             
-        inventory = self.player.get_consolidated_inventory() # Fetch player's consolidated inventory
+        inventory = self.player.get_consolidated_inventory() # Fetch the player's consolidated inventory
         self.fancy_text("\nAvailable items:")
-        # Loop through each item in the inventory, displaying their name, uses and description
+        # Loop through the consolidated inventory using enumerate, which provides both an index (starting from 1) and the item data. 
+        # For each item, print a line showing the item's number in the list, its name, the total number of uses as well as description
         for i, (name, props) in enumerate(inventory.items(), 1):
             self.fancy_text(f"{i}. {name} x{props['uses']} - {props['description']}")
         
         try:
             choice = int(input("\nSelect item (number) or 0 to cancel: "))
-            if choice == 0: # Cancel option
-                return
+            if choice == 0:
+                return # 0 to cance;
                 
-            item_name = list(inventory.keys())[choice-1]
+            item_name = list(inventory.keys())[choice-1] # Previously explained
             item_data = ITEMS[item_name]
             
             # Handle item effects
             if item_data["effect"] == "heal":
-                if self.player.health == self.player.max_health:
+                if self.player.health == self.player.max_health: # Cannot heal if player at max health
                     self.fancy_text("You're already at full health!")
                     time.sleep(0.5)
                     return
                 
-                self.player.heal(item_data["amount"])
+                self.player.heal(item_data["amount"]) # Otherwise heal specified amount
                 self.player.use_item(item_name)
                 self.fancy_text(f"Used {item_name}! HP restored to {self.player.health}/100")
             
-            elif item_data["effect"] == "full_heal":
+            elif item_data["effect"] == "full_heal": # For Starlight Jug, which is used to fully heal
                 self.player.full_heal()
                 self.player.use_item(item_name)
                 self.fancy_text(f"Used {item_name}! HP fully restored to {self.player.health}/100")
             
-            elif item_data["effect"] == "light_room":
+            elif item_data["effect"] == "light_room": # Flashlight item
                 room = self.rooms[self.current_room]
                 if room.is_dark:
-                    self.fancy_text("You light up the room temporarily!")
-                    room.is_dark = False
+                    self.fancy_text("You light up the room!")
+                    room.is_dark = False # Mark dark room as false since it's lit now
+                    # Remove from dark rooms set if it exists there
+                    if self.current_room in self.game_data["dark_rooms"]:
+                        self.game_data["dark_rooms"].remove(self.current_room) # Remove current room from dark rooms
+                    # Generate new normal room description
                     self.player.use_item(item_name)
+                    # Redisplay room info
+                    self.show_status()
+                    self.fancy_text(f"Room {self.current_room:04d}: {random.choice(ROOM_TYPES)}")
                 else:
-                    self.fancy_text("No need to use this in a lit room!")
+                    self.fancy_text("No need to use this in a lit room!") # Don't use in lit rooms
             
             elif item_data["effect"] in ("unlock", "open_door"):
-                self.fancy_text(f"You can use {item_name} when facing a locked door!")
+                self.fancy_text(f"You can use {item_name} when facing a locked door!") # Lockpicks
             
             else:
                 self.fancy_text(f"Used {item_name}!")
                 self.player.use_item(item_name)
                 
         except (ValueError, IndexError):
-            self.fancy_text("Invalid selection!")
+            self.fancy_text("Invalid selection!") # Error handler
 
         time.sleep(0.5)
     
     def attempt_puzzle(self, room_num):
-        puzzle = PUZZLES[room_num]
+        """Main function for puzzle rooms"""
+        puzzle = PUZZLES[room_num] # Fetch all puzzle rooms (0025, 0050, 0075, 0100)
         self.fancy_text(puzzle["description"])
         
         if room_num == 25:  # Lever puzzle
             while True:
-                choice = input("\nWhich lever will you pull? (1-3) or H for hint: ").strip().lower()
-                if choice == 'h':
-                    self.fancy_text(f"Hint: {puzzle['hint']}")
-                    continue
+                choice = input("\nWhich lever will you pull? (1-5) or H for hint: ").strip().lower()
                 
                 try:
-                    if int(choice) == puzzle["solution"]:
-                        self.fancy_text("The path ahead opens!")
-                        self.game_data["completed_puzzles"].add(room_num)
-                        return True
-                    else:
-                        RNG = random.random()
-                        if RNG < 0.50:
-                            self.fancy_text("Nothing happens. Try again.")
+                    choice_int = int(choice)
+                    if 1 <= choice_int <= 5:
+                        if choice_int == puzzle["solution"]:
+                            # Right choice
+                            self.fancy_text("The path ahead opens!")
+                            self.game_data["completed_puzzles"].add(room_num)
+                            return True  # Puzzle solved
                         else:
-                            self.player.health -= 5
-                            self.fancy_text("\nThe lever activates a trap, damaging you for 5 HP!")
-                            self.fancy_text(f"Current HP: {self.player.health}/100")
+                            # Wrong choice
+                            # 50% chance to damage player, 50% chance to do nothing
+                            RNG = random.random()
+                            if RNG < 0.50:
+                                self.fancy_text("Nothing happens. Try again.")
+                            else:
+                                self.player.health -= 5
+                                self.fancy_text("\nThe lever activates a trap, damaging you for 5 HP!")
+                                self.fancy_text(f"Current HP: {self.player.health}/100")
+                                
+                                # Check for death
+                                if self.player.health <= 0:
+                                    self.fancy_text("\nYou've run out of health!")
+                                    return False  # Player died
+                    else:
+                        self.fancy_text("Please enter a number between 1-5!") # Error handlers
                 except ValueError:
-                    self.fancy_text("Please enter a number 1-3 or H for hint!")
+                    self.fancy_text("Please enter a number between 1-5 or H for hint!") # Same with this one
         
-        elif room_num == 50:  # Riddle
+        elif room_num == 50:  # Riddle at room 50
             while True:
                 answer = input("Your answer (or H for hint): ").strip().lower()
                 if answer == 'h':
@@ -793,13 +850,13 @@ class Game:
                 
                 if answer == puzzle["solution"]:
                     self.fancy_text("Correct! The way forward is clear.")
-                    self.give_puzzle_reward(puzzle["reward"])
+                    time.sleep(0.5)
                     self.game_data["completed_puzzles"].add(room_num)
                     return True
                 else:
                     self.fancy_text("Incorrect. Try again.")
         
-        elif room_num == 75:  # Pressure plates
+        elif room_num == 75:  # Pressure plates at room 75
             while True:
                 self.fancy_text("Enter the sequence (e.g., '2 4 1 3') or H for hint: ")
                 choice = input().strip().lower()
@@ -808,10 +865,10 @@ class Game:
                     continue
                 
                 try:
-                    sequence = list(map(int, choice.split()))
+                    sequence = list(map(int, choice.split())) # Arange the pressure plates into a sequence using list
                     if sequence == puzzle["solution"]:
                         self.fancy_text("The plates click into place!")
-                        self.give_puzzle_reward(puzzle["reward"])
+                        time.sleep(0.5)
                         self.game_data["completed_puzzles"].add(room_num)
                         return True
                     else:
@@ -819,47 +876,44 @@ class Game:
                 except ValueError:
                     self.fancy_text("Please enter numbers separated by spaces!")
         
-        elif room_num == 100:  # Final puzzle
+        elif room_num == 100:  # Final puzzle before players beat game
             while True:
-                answer = input("Your answer (or H for hint): ").strip()
+                self.fancy_text("Your answer (or H for hint): ")
+                answer = input().strip().lower()
                 if answer.lower() == 'h':
                     self.fancy_text(f"Hint: {puzzle['hint']}")
                     continue
                 
                 try:
                     if int(answer) == puzzle["solution"]:
-                        self.fancy_text("The final gate opens!")
-                        self.give_puzzle_reward(puzzle["reward"])
+                        # Special handling for final puzzle
                         self.game_data["completed_puzzles"].add(room_num)
+                        self.current_room = 100  # Ensure we're at room 100
+                        self.move_forward()  # This will handle the victory outro
                         return True
                     else:
                         self.fancy_text("The gate remains sealed. Try again.")
                 except ValueError:
                     self.fancy_text("Please enter a number!")
     
-    def give_puzzle_reward(self, reward):
-        if "item" in reward:
-            self.player.add_item(reward["item"], reward.get("uses", 1))
-            self.fancy_text(f"Received {reward['item']} x{reward.get('uses', 1)}!")
-        elif "coins" in reward:
-            self.player.coins += reward["coins"]
-            self.fancy_text(f"Received {reward['coins']} coins!")
-        elif "victory" in reward:
-            self.show_outro()
-    
     def show_status(self):
         """Main function to handle status display. Part of the UI too"""
         room = self.rooms[self.current_room]
-        room_display = "???" if room.has_duplicated_rooms else f"{self.current_room:04d}"
-        self.fancy_text(f"Room: {room_display} | HP: {self.player.health}/{self.player.max_health} | Coins: {self.player.coins}")
+        # Duplicated rooms will show "Room ????", normal rooms show normal room numbers, e.g. "Room 0053"
+        room_display = "????" if room.has_duplicated_rooms else f"{self.current_room:04d}" 
+        # Status bar that's displayed to the user throughout the game. Very important!
+        self.fancy_text(f"Room: {room_display} | HP: {self.player.health}/{self.player.max_health} | Coins: {self.player.coins}") 
         if self.player.inventory:
+            # Display inventory
             inventory = self.player.get_consolidated_inventory()
+            # Construct a string that lists each item and its quantity in the format "ItemName xUses" (for example, "Potion x2")
+            # This is done using a list comprehension that iterates over the consolidated inventory's items and formats each entry accordingly
             self.fancy_text("Inventory: " + ", ".join([f"{name} x{props['uses']}" for name, props in inventory.items()]))
     
     def show_intro(self):
         try:
-            with open("data/intro.md", "r", encoding='utf-8') as f:
-                intro_text = f.read()
+            with open("data/intro.md", "r", encoding='utf-8') as f: # read intro from intro.md
+                intro_text = f.read() # file handling skills that we learnt in class came in clutch for this one
                 self.fancy_text(intro_text)
                 
             while True:
@@ -867,13 +921,13 @@ class Game:
                 if choice == '':
                     return  # Start the game
                 elif choice == 'h':
-                    self.show_help()
+                    self.show_help() # HELPPPPP
                     return
                 elif choice == 'q':
-                    self.fancy_text("\nThanks for checking out the game! Goodbye.")
+                    self.fancy_text("\nThanks for checking out the game! Goodbye.") # Goodbye :(
                     exit()
                 else:
-                    self.fancy_text("Invalid choice. Please press Enter, H, or Q.")
+                    self.fancy_text("Invalid choice. Please press Enter, H, or Q.") # Invalid choice
 
         except FileNotFoundError: # Special FileNotFoundError exception just in case if somehow intro.md is missing
             # WHICH SHOULD NEVER HAPPEN IN THEORY, BUT I'M JUST PUTTING IT HERE TO ENSURE EXCELLENT ERROR HANDLING
@@ -882,7 +936,7 @@ class Game:
     
     def show_help(self):
         # Define the help slides
-        help_slides = [
+        help_slides = [ # 4 help slides in total
 """===== HELP GUIDE (1/4) =====
 
 Game Controls:
@@ -915,7 +969,7 @@ Items:
 """===== HELP GUIDE (4/4) =====
 
 Puzzles & Obstacles:
-- Special rooms contain puzzles
+- Every 25 rooms contain puzzles
 - Solve them to progress
 - Some rooms have obstacles to overcome
             
@@ -925,7 +979,7 @@ What will you do?
 """
         ]
         
-        current_slide = 0
+        current_slide = 0 # Start at slide 0
         while True:
             print("\033c", end='')  # Clear screen
             self.fancy_text(help_slides[current_slide])
@@ -945,9 +999,9 @@ What will you do?
                 # Navigation for other slides
                 choice = input("Press D for next page or A for previous page > ").lower()
                 if choice == 'd' and current_slide < len(help_slides) - 1:
-                    current_slide += 1
+                    current_slide += 1 # Next slide
                 elif choice == 'a' and current_slide > 0:
-                    current_slide -= 1
+                    current_slide -= 1 # Previous slide
                 elif choice in ('q', 'p'):
                     # Allow early exit if player wants
                     if choice == 'p':
@@ -959,19 +1013,20 @@ What will you do?
                     self.fancy_text("Invalid input. Use A/D to navigate.")
     
     def replay_prompt(self):
+        """Replay option after death. Quite important"""
         while True:
             choice = input("\nWould you like to (R) replay or (Q) quit? > ").strip().lower()
 
-            if choice == 'r':
+            if choice == 'r': # Replay
                 while True:
                     skipIntro = input("Skip the introduction? (Y/N) > ").strip().lower()
-                    if skipIntro == 'y':
-                        self.__init__()
+                    if skipIntro == 'y': # No intro
+                        self.__init__() # Skip intro and just __init__
                         return True
-                    elif skipIntro == 'n':
+                    elif skipIntro == 'n': # Yes intro
                         self.__init__()  # Reset game state
                         print("\033c", end='')  # Clear screen
-                        self.show_intro()
+                        self.show_intro() # Show the intro again
                         return True
                     else:
                         self.fancy_text("Invalid choice. Please enter Y or N.\n")  # This will loop again
@@ -983,7 +1038,13 @@ What will you do?
 
     @staticmethod
     def fancy_text(text):
+        """
+        A fancy text function to simulate typing effect
+        I learnt this effect from Stack Overflow a few weeks ago, found it quite interesting, and adapted it for my game. Thank God I did.
+
+        This is the sole reason why so many people praised my game, I owe it too much
+        """
         for char in text:
-            time.sleep(0.02)
+            time.sleep(0.02) # Print character every 20 miliseconds
             print(char, end='', flush=True)
         print()

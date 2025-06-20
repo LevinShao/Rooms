@@ -3,13 +3,14 @@
 Hello there! This is an enhanced text-based adventure game inspired by the Roblox game **Doors**, where players navigate through 100 procedurally generated rooms while fighting monsters and solving puzzles on their way. Now with danger lurking in every corner, do you think you have what it takes to survive and escape?
 
 ## What's New in Update v2
-- 👹 **Dangerous Entities:** 5 Italian-inspired monsters that can attack you
+- 👹 **Dangerous Entities:** 5 Italian brainrot monsters that can attack you
 - 🎒 **Inventory System:** Collect and use helpful items
 - 👾 **Dark Rooms:** Chances for rooms to be pitch black (higher entity risk)
 - 🫴 **Looting Mechanic:** Search rooms for coins and items (but watch out for Peter the Spider!)
 - 🔦 **Items:** Flashlight, Bandage, Lockpick (WIP)
 - ❤️ **Health System:** Manage your 100 HP to survive the entities
 - 💰 **Economy:** Collect coins! (Currently useless)
+- 💰 **Replay Option:** Replay the game easily! 
 
 ## Core Gameplay
 - Move through 100 procedurally generated rooms with `W`/`S` keys

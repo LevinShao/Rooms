@@ -7,6 +7,10 @@
 I am planning to recreate the extremely popular Roblox game called Doors made by LSPLASH into my own version in Python. This game will be using a basic command-line interface (since Doors is a game that will require excellent visual graphics if made with a GUI application, and since I don't have too much experience with Pygame and Tkinter I'm just not sure how I would be able to find a way to recreate it there taking considerations of time restraints). 
 
 If you aren't familiar with what the game Doors is about (which I'm sure you don't), it is a very famous horror-survival game on Roblox and it involves a group of up to 4 players (or they can go solo) trying to survive 100 doors to get to the other side. They spawn at Door 0, which is the Reception area, and each time they survive and escape a room, they will enter the next room, so they will reach Door 001, 002, 003 and so on up to 100. Every single door has a chance for a monster to spawn, and they must react quickly in order to survive them, otherwise they die. Door 100 involves players to complete a mini-game that is extremely difficult, requiring them to fix broken wires around the map while simutaneously trying to avoid Figure, the final boss, who will traverse around the map seeking players based on audio cues. However, if they complete the mini-game and escape Door 100, they beat the game.
+
+If you are interested and would like to know more about Doors, watch this video for a more detailed insight:
+https://youtu.be/3BZUFxGUVdY?si=nHwNWbMwwbIjosmk
+
 ## Requirements Outline
 ### Functional Requirements
 * **Data Retrieval:** What does the user need to be able to view in the system? 
@@ -993,6 +997,1352 @@ Also, I must admit that my plan could be way too complicated. Since I have to pr
 ## UML Class Diagram
 ![UML](/images/UML%20Class%20Diagram.png) 
 
+## **Build and Test**
+**constants.py**
+```python
+import random
+
+# Entity dictionary
+ENTITIES = {
+    "Tralalero Tralala": {
+        "damage": 5, 
+        "interaction": {
+            "prompt": "Quickly! Press R to make him retreat!",
+            "success_key": "r",
+            "success_msg": "You scared Tralalero Tralala away!",
+            "fail_msg": "You hesitated! Tralalero Tralala attacks you!"
+        }
+    },
+    "Bombardino Crocodilo": {
+        "damage": 10, 
+        "interaction": {
+            "prompt": "Press H to hide!",
+            "success_key": "h",
+            "success_msg": "You hid just in time!",
+            "fail_msg": "You didn't hide! Bombardino Crocodilo attacks you!"
+        }
+    },
+    "Boneca Ambalabu": {
+        "damage": 5, 
+        "interaction": {
+            "prompt": "Don't look! Close your eyes (press C)",
+            "success_key": "c",
+            "success_msg": "You avoided eye contact!",
+            "fail_msg": "You looked directly at Boneca Ambalabu!"
+        }
+    },
+    "Tung Tung Tung Sahur": {
+        "damage": 10, 
+        "interaction": {
+            "prompt": "Stay still! Don't press anything for 5 seconds",
+            "success_key": None,  # Special timing-based interaction
+            "success_msg": "You remained still and survived!",
+            "fail_msg": "You moved and attracted Tung Tung Tung Sahur!"
+        }
+    }
+}
+
+# Items dictionary
+ITEMS = {
+    "Flashlight": {
+        "description": "Lets you see in dark rooms",
+        "effect": "light_room"
+    },
+    "Bandage": {
+        "description": "Restores 10 HP",
+        "effect": "heal",
+        "amount": 10
+    },
+    "Lockpick": {
+        "description": "50% chance to unlock doors",
+        "effect": "unlock"
+    },
+    "Key": {
+        "description": "Opens locked doors",
+        "effect": "open_door"
+    },
+    "Starlight Jug": {
+        "description": "Fully restores your health",
+        "effect": "full_heal",
+        "special": True  # Only found in special room
+    }
+}
+
+# Obstacles dictionary
+OBSTACLES = {
+    "Broken Floor": {
+        "description": "The floor ahead is crumbling. What will you do?",
+        "options": {
+            "Jump over": {
+                "success_chance": 0.5, 
+                "success": "You made it across safely!", 
+                "fail": "You fell and took some damage!", 
+                "damage": 10
+            },
+            "Go around": {
+                "time_cost": "You take a much longer path, losing some coins.", 
+                "coin_loss": (7, 13)
+            },
+        }
+    },
+    "Locked Door": {
+        "description": "A sturdy locked door blocks your path.",
+        "options": {
+            "Use lockpick": {
+                "item_required": "Lockpick", 
+                "success_chance": 0.5, 
+                "success": "The lock clicks open!", 
+                "fail": "The lockpick broke!"
+            },
+            "Search for key": {
+                "success_chance": 0.3, 
+                "success": "You found a key!", 
+                "fail": "No key here.", 
+                "time_cost": "You wasted time searching."
+            },
+            "Break door": {
+                "strength_check": 0.4, 
+                "success": "You broke the door down!", 
+                "fail": "The door breaks open, but you hurt your leg from kicking it too hard.", 
+                "damage": 10
+            }
+        }
+    },
+    "Collapsed Ceiling": {
+        "description": "Rubble blocks your path. How will you proceed?",
+        "options": {
+            "Climb over": {
+                "success_chance": 0.6,
+                "success": "You carefully climb over the debris!",
+                "fail": "You slip and take damage!",
+                "damage": 10
+            },
+            "Clear a path": {
+                "time_cost": "It takes time to clear the path.",
+                "damage": 5
+            }
+        }
+    }
+}
+
+# Room descriptions
+ROOM_TYPES = [
+    "A dimly lit hallway with flickering lights.",
+    "A spacious chamber with strange markings on the walls.",
+    "A narrow passageway that creaks with every step.",
+    "A circular room with an eerie humming sound.",
+    "A damp corridor with water dripping from the ceiling.",
+    "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints.",
+    "A cramped hotel room lie before you. You have to turn sideways to get through some sections.",
+    "A formal conference room with a large table and high-backed chairs.",
+    "A long, narrow aisle with torches spaced evenly along the walls."
+]
+
+# Dark room descriptions
+DARK_ROOM_DESCRIPTIONS = [
+    "Pitch black... you can't see anything. Who knows what might lurk here?",
+    "Complete darkness surrounds you. You shiver in fear as you hear quiet whispers of God-knows-what.",
+    "The lights have gone out completely. You are completely engulfed in darkness.",
+]
+
+# Special room puzzles
+PUZZLES = {
+    25: {
+        "description": "You see five levers on the wall. Only one opens the path forward.",
+        "solution": random.randint(1, 5),
+        "hint": "Some levers can be dangerous. Choose wisely!"
+    },
+    50: {
+        "description": "A riddle is inscribed on the wall: 'I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?'",
+        "solution": "echo",
+        "hint": "It's what you hear in mountains and caves."
+    },
+    75: {
+        "description": "There are four pressure plates on the floor. Step on the correct sequence to proceed.",
+        "solution": [2, 4, 1, 3],
+        "hint": "The sequence forms a simple pattern."
+    },
+    100: {
+        "description": "The final challenge! Solve this math puzzle: What is the sum of the first 10 prime numbers?",
+        "solution": 129,
+        "hint": "The primes are: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29"
+    }
+}
+
+# Special rooms with their unique properties
+SPECIAL_ROOMS = {
+    49: {
+        "description": "Preparation Room: A safe space before the big puzzle.",
+        "is_safe": True
+    },
+    51: {
+        "description": "Grand Throne Room: Where the king once resided.",
+        "is_safe": True,
+        "special_item_chance": 0.3
+    },
+    52: {
+        "description": "Levin's Shop: A place to spend your hard-earned coins.",
+        "is_safe": True,
+        "shop_items": {
+            "Bandage": 10,
+            "Lockpick": 15,
+            "Flashlight": 20
+        }
+    },
+    99: {
+        "description": "Final Preparation Room: Rest before the last challenge.",
+        "is_safe": True,
+        "heal_amount": 50
+    }
+}
+
+# In constants.py, remove Brr Brr Patapim from ENTITIES and add:
+DUPLICATED_ROOMS_EVENT = {
+    "description": "The room number is obscured... something feels wrong here. Very wrong indeed.",
+    "consequence": {
+        "damage": 10,
+        "message": "Brr Brr Patapim attacks you from the fake door!"
+    }
+}
+```
+
+**functions.py**
+
+Warning: This code will be very long, but don't freak out, **I've written way more complicated programs before**
+```python
+# Some of the code here is SO complicated that I literally have to take inspiration by looking at the source code for the original Doors game in Roblox Studio.
+# Gotta say, I hope the 3 all-nighters I pulled for this task will be worth it.
+# My brain is literally burning right now, I am not joking.
+# Also, special thanks to QuackGod on Discord and a few other people for helping me with some sections of this code!
+
+# All of these modules right here are part of the standard Python library
+# They do NOT need to be pip installed!
+# This means that I don't need to write a requirements.txt file, since there is literally nothing needed for the player to install
+# They can literally just download the program, then run it as soon as they import it to VS Code
+
+import time # For time.sleep functions
+import random # RNG for entities and obstacles
+import msvcrt # Msvcrt is useful for non-blocking input in Windows
+
+# Msvcrt is very useful for my entity functions, since when the player comes across an entity,
+# they wouldn't need to press Enter after using the key
+# For example, if the player comes across Boneca Ambalabu, they'll just need to press the C key in order to avoid him
+# They wouldn't need to press C then enter, thanks to the msvcrt module
+# If I didn't use msvcrt, then the player would have to type C then enter, which could be really inefficient
+# Since the player is only allowed 3 seconds in order to avoid the entity, otherwise they take damage
+# With msvcrt, the p0layer can just press the C key, and it would register as the player input without having to hit enter
+
+# These two modules will be used as an alternative to msvcrt since msvcrt is Windows-only
+# These two are used for any other OS other than Windows
+import sys
+import select
+
+from constants import * # Import everything from constants.py
+
+# The main player class that manages health, inventory, and special room visits
+class Player:
+    def __init__(self): # Initalize player with default values
+        self.health = 100 # Starting health
+        # Maximum possible health. This is added so that using the bandage can't exceed the maximum health
+        # For example, if the player has 98 HP and uses a bandage which heals 10 HP, the player can only heal 2 HP back to 100, not exceeding it.
+        self.max_health = 100
+        self.inventory = [] # List of items in player inventory
+        self.coins = 0 # Starting coin amount
+        self.special_room_visited = False # Special room tracker that tracks if players has visited any special rooms (such as Room 051)
+        # Mark false because the player hasn't visited any special rooms on start        
+
+    # --------------------- ITEM MANAGEMENT -----------------------------
+
+    def add_item(self, item_name, uses=1): # Add item to inventory
+        # Check if item already exists in inventory
+        existing_item = next((item for item in self.inventory if item["name"] == item_name), None) # Loop through inventory to find item by their name
+        if existing_item:
+            # If items exists, increase its uses. For example, if the player collected a bandage and they already have two, then make it three uses.
+            existing_item["uses"] += uses
+        else:
+            self.inventory.append({"name": item_name, "uses": uses}) # Otherwise just add it to their inventory with name and uses displayed
+    
+    def use_item(self, item_name): # Use the item
+        item = next((item for item in self.inventory if item["name"] == item_name), None) # Once again, loop through the inventory to find the item by their name
+        if item:
+            item["uses"] -= 1 # Minus a use from the item
+            if item["uses"] <= 0: # If the item has no uses left, remove it from the inventory
+                self.inventory.remove(item)
+            return True
+        return False # If the item doesn't even exist, return False
+    
+    def has_item(self, item_name):
+        return any(item["name"] == item_name for item in self.inventory)
+    
+    def get_consolidated_inventory(self): # Consolidate the inventory to show items with their total uses
+        consolidated = {} # Create an empty dictionary to store consolidated items
+        for item in self.inventory:
+            if item["name"] in consolidated: # If the item already exists in the consolidated dictionary, add its uses to the existing entry
+                consolidated[item["name"]]["uses"] += item["uses"]
+            else:
+                # Otherwise, add the item to the consolidated dictionary with its uses and description
+                consolidated[item["name"]] = {
+                    "uses": item["uses"], 
+                    "description": ITEMS[item["name"]]["description"]
+                }
+        return consolidated # Return the consolidated inventory dictionary to the player
+    
+    def take_damage(self, amount):  # Take damage from an entity, obstacle or event
+        self.health -= amount
+        return self.health > 0
+    
+    def heal(self, amount): # Heal the player by a certain amount
+        self.health = min(self.max_health, self.health + amount) # Make sure the health doesn't exceed the maximum health
+    
+    def full_heal(self): # Full heal mechanic for the Starlight Jug item which heals all player's health
+        self.health = self.max_health
+
+class Room:
+    def __init__(self, number, persistent_room_types, game_data):  # Add game_data parameter
+        self.number = number # Room number
+        self.visited = False # Mark visited rooms as false
+        self.looted = False # Mark looted rooms as false
+        self.is_dark = False # Mark dark rooms as false
+        self.has_entity = False # Mark rooms with entity false
+        self.has_obstacle = False # Mark rooms with obstacle false
+        self.entity = None # Mark entity as None since they don't spawn at start
+        self.obstacle = None # Mark obstacle as None for the same reason
+        self.is_special = number in SPECIAL_ROOMS # Check if the room is a special room
+        self.is_puzzle = number in PUZZLES # Check if the room is a puzzle room
+        self.persistent_description = persistent_room_types[number] # This function right here will generate persistent descriptions
+
+        # The generate_room_description function used to be able to generate persistent room descriptions in Sprint 1 and 2
+        # But since I added classes in Sprint 3, there was an issue with the persistent descriptions not being generated correctly
+        # I think this was due to the fact that the persistent descriptions in the generate_room_description function were generated before the game_data was passed to the Room class
+        # And the easiest solution for this, as far as I can tell from all the research, is to pass the game_data to the Room class by adding a game_data parameter to the __init__ function, like how I did it here.
+
+        self.game_data = game_data  # Store game_data reference
+        self.has_duplicated_rooms = False # The duplicated rooms event tracker. 
+        # Duplicated rooms wasn't added as an obstacle because it behaves differently than other obstacles
+    
+    def spawn_entity(self):
+        """
+        Spawns an entity in the current room
+
+        If the room is dark, there is a 60% chance to spawn a dark-favored entity.
+        Otherwise, a random entity is chosen from the available entities.
+        Marks the room as having an entity and records the spawn in game data.
+
+        Will not spawn obstacles in special rooms, puzzle rooms or rooms 000 and 100.
+        This function will be called in the enter_room function. When it lands on the random chance,
+        this function will be used to mark has_obstacles to True
+        then, after it's marked as True, move_forward will call the handle_duplicated_rooms function
+        which will then do all the event-related stuff, such as sending the display to the player
+        """
+        self.has_entity = True # Mark has_entity as true
+        if self.is_dark: # If the room is a dark room
+            dark_favored = ["Boneca Ambalabu", "Tung Tung Tung Sahur"] # Boneca Ambalabu and Tung Sahur will be set as dark favored entities
+            # 60% chance for dark favored entity, otherwise choose an entity from the entity list that is not dark favored
+            self.entity = random.choice(dark_favored if random.random() < 0.6 else [e for e in ENTITIES if e not in dark_favored])
+        else:
+            self.entity = random.choice(list(ENTITIES.keys())) # For normal, lit rooms, choose whatever entity
+        self.game_data["entity_spawned_rooms"].add(self.number) # Add room number as having had an entity
+
+    def spawn_obstacle(self):
+        """
+        Main function for obstacle spawning
+        
+        Will not spawn obstacles in special rooms, puzzle rooms or rooms 000 and 100.
+        This function will be called in the enter_room function. When it lands on the random chance,
+        this function will be used to mark has_obstacles to True
+        then, after it's marked as True, move_forward will call the handle_duplicated_rooms function
+        which will then do all the event-related stuff, such as sending the display to the player
+        """
+        if (self.number in (0, 100) or self.is_special or self.is_puzzle):
+            return False # Return false for these rooms
+        # Otherwise mark as true, and generate a random obstacle
+        self.has_obstacle = True
+        self.obstacle = random.choice(list(OBSTACLES.keys()))
+        # Add current room to obstacle-spawned rooms in game data
+        self.game_data["obstacle_spawned_rooms"].add(self.number)
+
+    def spawn_duplicated_rooms_event(self):
+        """
+        Main function controlling the duplicated rooms event
+        
+        This function will be called in the enter_room function. When it lands on the random chance,
+        this function will be used to mark has_duplicated_rooms to True
+        then, after it's marked as True, move_forward will call the handle_duplicated_rooms function
+        which will then do all the event-related stuff, such as sending the display to the player
+        """
+        if (self.is_special or self.is_puzzle or self.number in (0, 100)):
+            return False # Once again we wanna return false for any of the rooms listed above
+        self.has_duplicated_rooms = True
+        self.game_data["event_spawned_rooms"].add(self.number) # Add current room to event spawned list
+
+    @staticmethod
+    # A static method is a method that belongs to a class but does not operate on instances of that class. 
+    # It does not require a reference to the instance (self) or the class (cls) as its first parameter. 
+    def get_room_description(self, game):
+        """Generate room types that will persist for the entire game"""
+        room_types = {}
+        for room_number in range(101):
+            if room_number == 0: # Room 0000
+                room_types[0] = "Reception Area: A creaky wooden door behind you."
+            elif room_number == 100: # Room 0100
+                room_types[100] = "You stumble into the outside, seeing a massive gate covered in angelic symbols in front of you."
+            elif room_number in SPECIAL_ROOMS: # Special room
+                room_types[room_number] = SPECIAL_ROOMS[room_number]["description"]
+            elif room_number in PUZZLES: # Puzzle room
+                room_types[room_number] = f"Room {room_number:04d}: {PUZZLES[room_number]['description']}"
+            elif room_number in self.game_data["dark_rooms"]: # Dark room
+                room_types[room_number] = f"⚠️  DARK ROOM: {random.choice(DARK_ROOM_DESCRIPTIONS)}"
+            elif room_number == game.starlight_room: # Starlight room
+                room_types[room_number] = f"💫  STARLIGHT ROOM: This room glows with golden light. Maybe a good idea to loot?"
+            else: # Any other normal room
+                room_types[room_number] = f"Room {room_number:04d}: {random.choice(ROOM_TYPES)}"
+        return room_types
+        # Also, round every room number to 4 d.p. as a convention to the original Doors game
+    
+    def handle_duplicated_rooms(self, game):
+        """
+        The main function for the duplicated room event.
+        
+        This code was pulled and slightly modified from the original source code for a 
+        collaborative sandbox game me and some other friends made around 2 years ago
+        """
+        # The real next room is supposed to be the one after the current room
+        # So that means it should be the current room + 1
+        # If the player comes across this event at Room 045, the next room should be 046, shouldn't it?
+        real_next_room = self.number + 1
+        
+        # Generate potential fake room numbers that could be shown to player
+
+        # Criteria for fake rooms:
+        # - Must be within 1-100 range
+        # - Can't be special/puzzle rooms
+        # - Can't be the actual next room
+        # - Initially looks 3 rooms ahead (n+1 to n+3)
+        possible_fakes = [
+            n for n in range(self.number + 1, self.number + 4) 
+            if n <= 100 and 
+            n not in SPECIAL_ROOMS and 
+            n not in PUZZLES and 
+            n != real_next_room
+        ]
+        
+        # If we don't have enough forward rooms, allow some backward options
+        if len(possible_fakes) < 2:
+            possible_fakes += [
+                n for n in range(self.number - 2, self.number) 
+                if n > 0 and 
+                n not in SPECIAL_ROOMS and 
+                n not in PUZZLES and 
+                n != real_next_room
+            ]
+        
+        # Make sure we have exactly 2 fake rooms
+        fake_rooms = random.sample(possible_fakes, min(2, len(possible_fakes)))
+        
+        # Create door options (1 real, 2 fake)
+        doors = [real_next_room] + fake_rooms
+        random.shuffle(doors) # Random module's shuffle function is EXTREMELY useful here!
+        # Without shuffle I don't know how else I'm supposed to have created this function
+        
+        game.fancy_text("\nThe room number is obscured... something feels wrong here.")
+        game.fancy_text("You see three doors ahead:")
+        
+        # Display ALL the door options
+        for i, door in enumerate(doors, 1):
+            game.fancy_text(f"{i}. Room {door:04d}") # 4 decimal places as usual
+        
+        # Main choice loop - repeats until valid choice or player dies
+        while True:
+            try:
+                # The code right here is a bit complex but since I kind of just copied them from an old game I'll do whatever
+                choice = int(input("Choose a door (1-3): "))
+                if 1 <= choice <= 3:
+                    selected_room = doors[choice-1] # Convert to a 0-based index.
+                    
+                    if selected_room == real_next_room: # Success scenario
+                        game.fancy_text("You chose the correct door!")
+                        self.has_duplicated_rooms = False
+                        return selected_room  # Return the real room number
+                    else: # Handle wrong choice
+                        # Apply damage while checking for death
+                        game.fancy_text(DUPLICATED_ROOMS_EVENT["consequence"]["message"] + " You lost 10 HP!")
+                        if not game.player.take_damage(DUPLICATED_ROOMS_EVENT["consequence"]["damage"]):
+                            return None  # Player died
+                        game.fancy_text(f"Current HP: {game.player.health}/{game.player.max_health}")
+                        
+                        # Show doors again after wrong choice
+                        game.fancy_text("\nThe three doors remain:")
+                        for i, door in enumerate(doors, 1):
+                            game.fancy_text(f"{i}. Room {door:04d}")
+                else: # Error handlers
+                    game.fancy_text("Please enter a number between 1 and 3")
+            except ValueError:
+                game.fancy_text("Invalid input! Please enter a number")
+
+class Game:
+    """
+    The main game class. 
+    
+    This is the most important class since it's in control of everything in the game's nature.
+    """
+    def __init__(self): # Initialize everything
+        self.player = Player()
+        self.current_room = 0
+        self.game_data = { # ALL THE MOST IMPORTANT GAME DATA IS STORED HERE
+            "visited_rooms": set(),
+            "looted_rooms": set(),
+            "dark_rooms": set(),
+            "completed_puzzles": set(),
+            "entity_spawned_rooms": set(),
+            "obstacle_spawned_rooms": set(),
+            "event_spawned_rooms": set()
+        }
+        
+        # Generate starlight room FIRST
+        self.starlight_room = self.generate_starlight_room()
+        
+        # Then generate dark rooms
+        self.generate_dark_rooms()
+        
+        # Then create rooms with this information
+        self.persistent_room_types = Room.get_room_description(self, self)
+        self.rooms = {i: Room(i, self.persistent_room_types, self.game_data) for i in range(101)}
+        self.setup_special_rooms()
+    
+    def setup_special_rooms(self): # Configuration function for special rooms
+        # For every room number in the special rooms list, make sure they aren't dark, doesn't have an entity, obstacle or room event
+        for room_num in SPECIAL_ROOMS:
+            room = self.rooms[room_num]
+            room.is_dark = False
+            room.has_entity = False
+            room.has_obstacle = False
+            room.has_duplicated_rooms = False
+
+    def generate_dark_rooms(self):
+        possible_rooms = list(range(1, 100)) # Possible rooms range from 001 to 100
+        
+        # Remove special rooms and puzzle rooms from possible dark rooms
+        excluded_rooms = set(SPECIAL_ROOMS.keys()).union(set(PUZZLES.keys()))
+        possible_rooms = [r for r in possible_rooms if r not in excluded_rooms]
+        
+        # Select dark rooms
+        dark_rooms = set(random.sample(possible_rooms, 10))
+        
+        # Make some dark rooms consecutive
+        for room in list(dark_rooms):
+            if random.random() < 0.3 and room < 99:  # 30% chance to have consecutive dark rooms
+                new_room = room + 1 # Consecutive function
+                if new_room not in excluded_rooms:
+                    dark_rooms.add(new_room)
+        
+        self.game_data["dark_rooms"] = dark_rooms  # Store the dark rooms in game_data
+    
+    def generate_starlight_room(self):
+        """Generate a random room for the Starlight Jug"""
+        # Rooms where Starlight Jug cannot appear (special rooms and puzzle rooms)
+        excluded_rooms = {0, 25, 49, 50, 51, 52, 75, 99, 100}
+        # All possible rooms between 1-99 that aren't excluded
+        possible_rooms = [r for r in range(1, 100) if r not in excluded_rooms]
+        # Randomly select one room from possible candidates
+        return random.choice(possible_rooms)
+    
+    def move_forward(self):
+        """Basic function for moving forward"""
+        room = self.rooms[self.current_room]
+        
+        if room.has_duplicated_rooms: # If the room has the duplicated rooms event
+            result = room.handle_duplicated_rooms(self) # Call the handle dupe rooms function to handle dupe rooms
+            if result is None:  # Player died
+                return False
+            self.current_room = result # Dupe rooms process
+            self.game_data["visited_rooms"].add(self.current_room) # Add room into visited rooms list
+            self.fancy_text(f"Moved forward to Room {self.current_room:04d}.") # 4 d.p.
+            time.sleep(0.5) # Short pause
+            self.enter_room() # Enter new room by using enter room function
+            return True
+        
+        if self.current_room < 100: # If the room is just a normal room
+            next_room = self.current_room + 1 # Progression by adding 1. For example, Room 0045 --> Room 0046
+            self.current_room = next_room
+            self.game_data["visited_rooms"].add(self.current_room) # Mark visited
+            self.fancy_text(f"Moved forward to Room {self.current_room:04d}.")
+            time.sleep(0.5)
+            self.enter_room()
+            return True
+        else: # IF THE PLAYER BEATS THE GAME
+            outro_text = (
+                "\nYou've reached the exit beyond Room 100!\n"
+                "Congratulations! You've beaten the game!\n\n"
+                "Thanks for playing!"
+            )
+            self.fancy_text(outro_text)
+            self.replay_prompt()
+            return False
+    
+    def move_backward(self):
+        """Basic function for moving backward"""
+        if self.current_room > 0: 
+            # If in a room that's not 0 then decrease room number by 1 every time player goes back
+            self.current_room -= 1
+            self.fancy_text(f"Moved backward to Room {self.current_room:04d}.")
+            time.sleep(0.5)
+            self.enter_room()
+            return True
+        else: # For Room 0000
+            self.fancy_text("The door behind you is blocked. You can't turn back now.")
+            time.sleep(0.5)
+            return False # Mark as false because player won't be allowed to move back
+    
+    def enter_room(self):
+        """A very important function to handle stuff when player enters new room"""
+        # Mark room as visited as soon as player enters
+        room = self.rooms[self.current_room]
+        room.visited = True
+        self.game_data["visited_rooms"].add(self.current_room)
+        
+        # Set room darkness based on game_data
+        room.is_dark = self.current_room in self.game_data["dark_rooms"]
+        
+        # Handle special room effects
+        if self.current_room in SPECIAL_ROOMS:
+            self.handle_special_room()
+            return
+        
+        # Only spawn events/entities/obstacles if first visit
+        if (self.current_room not in self.game_data["entity_spawned_rooms"] and 
+            self.current_room not in self.game_data["obstacle_spawned_rooms"] and
+            self.current_room not in self.game_data["event_spawned_rooms"] and
+            not room.is_special and not room.is_puzzle):
+            
+            spawn_roll = random.random() # Will decide if an entity/obstacle/room event will spawn
+
+            if room.is_dark: # Dark rooms
+                if spawn_roll < 0.60:
+                    # Try different spawns with adjusted probabilities
+                    spawn_roll2 = random.random()
+                    if spawn_roll2 < 0.10:  # 10% duplicated rooms
+                        room.spawn_duplicated_rooms_event()
+                    elif spawn_roll2 < 0.80:  # 70% entities (10-80)
+                        room.spawn_entity()
+                    else:  # 20% obstacles (80-100)
+                        room.spawn_obstacle()
+            elif self.current_room >= 90: # Rooms after 0089
+                if spawn_roll < 0.50:
+                    spawn_roll2B = random.random()
+                    if spawn_roll2B < 0.10:  # 10% duplicated rooms
+                        room.spawn_duplicated_rooms_event()
+                    elif spawn_roll2B < 0.70:  # 60% entities (10-70)
+                        room.spawn_entity()
+                    else:  # 30% obstacles (70-100)
+                        room.spawn_obstacle()
+            else: # 0001-0089 that's not a dark room, puzzle or special rooms
+                if spawn_roll < 0.30:
+                    spawn_roll2C = random.random()
+                    if spawn_roll2C < 0.30:  # 30% duplicated rooms
+                        room.spawn_duplicated_rooms_event()
+                    elif spawn_roll2C < 0.70:  # 40% entities (30-70)
+                        room.spawn_entity()
+                    else:  # 30% obstacles (70-100)
+                        room.spawn_obstacle()
+    
+    def handle_special_room(self):
+        """Main function to handle special rooms"""
+        room_num = self.current_room
+        room_data = SPECIAL_ROOMS.get(room_num, {}) # Fetch special rooms info from the list
+        
+        if room_num == 49:  # Preparation room
+            self.fancy_text("\nThis is a safe room to prepare for the upcoming puzzle.")
+        
+        elif room_num == 51:  # Throne room
+            if not self.player.special_room_visited and random.random() < room_data.get("special_item_chance", 0): # Find a rare item in the throne room
+                self.fancy_text("\nYou found a rare item in the throne room!")
+                self.player.add_item(random.choice(list(ITEMS.keys()))) # Plot twist: the item is not rare at all (it's literally just a random common item)
+                self.player.special_room_visited = True # Mark special rooms as true
+        
+        elif room_num == 52:  # Levin's Shop
+            self.visit_shop()
+        
+        elif room_num == 99:  # Final preparation room
+            heal_amount = room_data.get("heal_amount", 0) # Fetch the heal amount from the room data
+            self.player.heal(heal_amount) # Heal fuunction
+            self.fancy_text(f"\nYou feel refreshed! +{heal_amount} HP") # Immediately heal player up when they reach room 0099 as a reward for getting that far
+    
+    def visit_shop(self):
+        """
+        Function to handle Levin's Shop
+        
+        This code was ripped off from the economy game function of a Discord bot I made in Python a few years prior.
+        """
+        self.fancy_text("\nWelcome to Levin's Shop!")
+        self.fancy_text(f"Your coins: {self.player.coins}") # Retrieve coin amount from player class
+        
+        shop_items = SPECIAL_ROOMS[52]["shop_items"]
+        while True:
+            self.fancy_text("\nAvailable items:") # Display all items
+            for i, (item, price) in enumerate(shop_items.items(), 1): 
+                # Loop through each available item in the shop
+                # Display their item name and price as well as description
+                self.fancy_text(f"{i}. {item} - {price} coins ({ITEMS[item]['description']})")
+            
+            self.fancy_text("0. Exit shop") # Exit
+            
+            try:
+                choice = int(input("\nWhat would you like to buy? "))
+                if choice == 0:
+                    break # Exit function
+                
+                # Convert the shop's item keys to a list and using the player's choice (minus one, since lists are zero-indexed) to get the correct item.
+                item_name = list(shop_items.keys())[choice-1]
+                price = shop_items[item_name]
+                
+                # If the player has enough coins, the item's price is subtracted from their coin total, the item is added to their inventory
+                if self.player.coins >= price:
+                    self.player.coins -= price
+                    self.player.add_item(item_name)
+                    self.fancy_text(f"You bought {item_name}!")
+                else:
+                    self.fancy_text("Not enough coins!") # Not enough coins
+            except (ValueError, IndexError):
+                self.fancy_text("Invalid choice!") # Error handler for invalid inputs
+
+    def handle_entity_encounter(self):
+        """Main function for handling entity encounters"""
+        room = self.rooms[self.current_room]
+        if not room.has_entity:
+            return True # Return true if room has entity
+            
+        # Entity variables
+        entity_name = room.entity
+        entity_data = ENTITIES[entity_name]
+        interaction = entity_data["interaction"]
+        
+        self.fancy_text(f"\nOh no! {entity_name} appears!")
+        self.fancy_text(interaction["prompt"])
+        
+        # Special case for Tung Sahur (timing-based)
+        if entity_name == "Tung Tung Tung Sahur":
+            start_time = time.time()
+            end_time = start_time + 5  # 5 second challenge
+            
+            try:
+                # Windows version using msvcrt
+                while time.time() < end_time:
+                    if msvcrt.kbhit():  # If any key was pressed
+                        _ = msvcrt.getch()  # Clear the keypress
+                        self.fancy_text(interaction["fail_msg"])
+                        return self.resolve_entity_damage(entity_data)
+                    
+                # If we get here, no keys were pressed
+                self.fancy_text(interaction["success_msg"])
+                room.has_entity = False
+                return True
+            except ImportError:
+
+                # Msvcrt is a Windows-based module. Computers running MacOS or Linux would not be able to use Msvcrt, which could result in import errors
+                # So this is directed to specifically computers running these OS systems, since they wouldn't be able to use Msvcrt unless they're on Windows
+                # In this case, we will use sys stdin as a workaround to this issue
+                # The following code works basically the same as to the code above, just modified to fit sys-stdin into the code.
+
+                # Unix version using sys and select
+                while time.time() < end_time:
+                    if select.select([sys.stdin], [], [], 0)[0]: # this code was kind of copied from Stack Overflow but anyways
+                        _ = sys.stdin.read(1)  # Clear the keypress
+                        self.fancy_text(interaction["fail_msg"])
+                        return self.resolve_entity_damage(entity_data)
+                    
+                # If we get here, no keys were pressed
+                self.fancy_text(interaction["success_msg"])
+                room.has_entity = False
+                return True
+        
+        # NOW FOR ANY ENTITY THAT IS NOT TUNG SAHUR
+
+        # Set time limit for response (3 seconds)
+        self.fancy_text("\nYou have 3 seconds to respond!")
+        start_time = time.time()
+
+        # The following code is learnt and written from YouTube tutorials
+        
+        try:
+            # For Windows
+            end_time = start_time + 3
+            while time.time() < end_time:
+                if msvcrt.kbhit():  # Check if key was pressed
+                    user_input = msvcrt.getch().decode().lower()
+                    if user_input == interaction["success_key"]:
+                        self.fancy_text(interaction["success_msg"])
+                        room.has_entity = False
+                        return True
+                    else:
+                        break  # Wrong key pressed
+            # Time ran out or wrong key
+            self.fancy_text("\nTime's up or wrong key!")
+            self.fancy_text(interaction["fail_msg"])
+            return self.resolve_entity_damage(entity_data)
+        except ImportError:
+            # Unix/non-Windows OS (sys and select instead of msvcrt)
+            end_time = start_time + 3
+            while time.time() < end_time:
+                if select.select([sys.stdin], [], [], 0)[0]: # Copied off internet my bad
+                    user_input = sys.stdin.read(1).lower()
+                    if user_input == interaction["success_key"]:
+                        self.fancy_text(interaction["success_msg"])
+                        room.has_entity = False
+                        return True
+                    else:
+                        break  # Wrong key pressed
+            # Time ran out or wrong key
+            self.fancy_text("\nTime's up or wrong key!")
+            self.fancy_text(interaction["fail_msg"])
+            return self.resolve_entity_damage(entity_data) # Resolve entity damage
+    
+    def resolve_entity_damage(self, entity_data):
+        """Resolve entity damage with this function"""
+        damage = entity_data["damage"] # Fetch damage
+        self.player.health -= damage # Deduct damage from player HP
+        self.fancy_text(f"You lost {damage} HP! (Current HP: {self.player.health})")
+        
+        if self.player.health <= 0:
+            return False # If health less than 0, just die.
+        return True # Otherwise keep going
+    
+    def handle_obstacle(self):
+        """
+        Handles obstacle encounters in the current room.
+        Presents obstacle description and available options to player,
+        processes their choice, and resolves the outcome.
+        """
+        
+        # Get reference to current room object
+        room = self.rooms[self.current_room]
+        
+        # Early return if no obstacle exists in this room
+        if not room.has_obstacle:
+            return True  # No obstacle to handle
+        
+        # Get obstacle details from constants
+        obstacle_name = room.obstacle
+        obstacle_data = OBSTACLES[obstacle_name]
+
+        # Display obstacle description to player
+        self.fancy_text(f"\n{obstacle_data['description']}")
+        
+        # Main interaction loop - continues until obstacle is resolved
+        while True:  
+            # Get all available options for this obstacle
+            options = list(obstacle_data["options"].items())
+
+            # Display each option with numbered choices (starting at 1)
+            for i, (option, _) in enumerate(options, 1):
+                self.fancy_text(f"{i}. {option}")
+
+            try:
+                # Get player's choice (convert to 0-based index)
+                choice = int(input("\nChoose an option: ")) - 1
+                
+                # Validate choice is within available options range
+                if 0 <= choice < len(options):
+                    # Get details of selected option
+                    option_name, outcome = options[choice]
+                    
+                    # Resolve the outcome of chosen option
+                    success = self.resolve_obstacle_outcome(option_name, outcome)
+
+                    if success:
+                        # Clear obstacle flag if successfully resolved
+                        room.has_obstacle = False
+                        return True  # Obstacle cleared
+        
+                    # If not successful, loop continues to retry
+                else:
+                    # Handle out-of-range number input
+                    self.fancy_text("Invalid choice! Please pick a valid option.\n")
+                    
+            except ValueError:
+                # Handle non-numeric input
+                self.fancy_text("Please enter a number!\n")
+    
+    def resolve_obstacle_outcome(self, option_name, outcome):
+        # Check for item requirement first
+        # This part is specifically for lockpicks against locked-door obstacle
+        if "item_required" in outcome:
+            if not self.player.has_item(outcome["item_required"]):
+                self.fancy_text(f"You need a {outcome['item_required']}!")
+                return False
+            
+            self.player.use_item(outcome["item_required"])
+        
+        # Handle success chance
+        if "success_chance" in outcome:
+            if random.random() <= outcome["success_chance"]:
+                self.fancy_text(outcome["success"])
+                
+                # Special case for finding key
+                # Not up to my expectations for this part but had to go like this because I was running out of time
+                # And this was the easiest to code as well
+                if option_name == "Search for key" and outcome["success"] == "You found a key!":
+                    self.player.add_item("Key")
+                return True
+            else:
+                # Fail scenario
+                self.fancy_text(outcome["fail"])
+                if "damage" in outcome:
+                    return self.player.take_damage(outcome["damage"]) # Take damage
+                return True
+        
+        # Handle time cost outcomes
+        if "time_cost" in outcome:
+            self.fancy_text(outcome["time_cost"]) # Another fail scenario right here
+            if "coin_loss" in outcome:
+                loss = random.randint(*outcome["coin_loss"]) # Lose some coins as the fail scenario
+                self.player.coins = max(0, self.player.coins - loss) # Player's coins after coin loss cannot go below 0
+                self.fancy_text(f"Lost {loss} coins!")
+        
+        # Handle damage from actions
+        if "damage" in outcome:
+            return self.player.take_damage(outcome["damage"])
+        
+        return True
+    
+    def loot_room(self):
+        """Loot room function. Part of the user interface and is very important"""
+        room = self.rooms[self.current_room]
+        if room.looted: # If room is already looted:
+            self.fancy_text("You've already looted this room. You can't seem to find anything else.")
+            time.sleep(0.5)
+            return
+            
+        # Check for Starlight Jug in special room
+        if self.current_room == self.starlight_room and not self.player.has_item("Starlight Jug"):
+            self.fancy_text("\nAmong the items, you find the legendary Starlight Jug!")
+            time.sleep(0.5)
+            self.player.add_item("Starlight Jug") # Add Jug to inventory
+            room.looted = True # Set looted to true
+            return
+        
+        # Guaranteed coins
+        coins_found = random.randint(2, 5)
+        self.player.coins += coins_found # Add 2-5 coins to inventory
+        self.fancy_text(f"\nFound {coins_found} coins!")
+        
+        # Determine if player gets an item or encounters Peter (mutually exclusive)
+        outcome = random.random()
+        
+        if outcome <= 0.35:  # 35% chance for item
+            # Random item
+            item = random.choice(list(ITEMS.keys()))
+            # Don't give Starlight Jug as random loot
+            while item == "Starlight Jug":
+                item = random.choice(list(ITEMS.keys()))
+                
+            # Add the loot into the player inventory
+            self.player.add_item(item)
+            self.fancy_text(f"Among the coins, you discover a {item}! ({ITEMS[item]['description']})")
+        
+        elif outcome > 0.85:  # 15% chance for Peter the Spider to appear and attack
+            damage = random.randint(3, 5) # Random 3-5 damage
+            self.player.health -= damage # Deal damage
+            self.fancy_text(f"\nPeter the Spider jumps out and scratches you! (-{damage} HP)")
+            self.fancy_text(f"He quickly scurries away into the darkness...")
+            self.fancy_text(f"Current HP: {self.player.health}/100")
+        
+        room.looted = True # Set room looted to true
+        time.sleep(0.5)
+        self.game_data["looted_rooms"].add(self.current_room) # Add the current room to looted room
+
+    def use_item(self):
+        """Main use item function. Part of user interface and very important"""
+        if not self.player.inventory: # If nothing is in inventory
+            self.fancy_text("Your inventory is empty!")
+            time.sleep(0.5)
+            return
+            
+        inventory = self.player.get_consolidated_inventory() # Fetch the player's consolidated inventory
+        self.fancy_text("\nAvailable items:")
+        # Loop through the consolidated inventory using enumerate, which provides both an index (starting from 1) and the item data. 
+        # For each item, print a line showing the item's number in the list, its name, the total number of uses as well as description
+        for i, (name, props) in enumerate(inventory.items(), 1):
+            self.fancy_text(f"{i}. {name} x{props['uses']} - {props['description']}")
+        
+        try:
+            choice = int(input("\nSelect item (number) or 0 to cancel: "))
+            if choice == 0:
+                return # 0 to cance;
+                
+            item_name = list(inventory.keys())[choice-1] # Previously explained
+            item_data = ITEMS[item_name]
+            
+            # Handle item effects
+            if item_data["effect"] == "heal":
+                if self.player.health == self.player.max_health: # Cannot heal if player at max health
+                    self.fancy_text("You're already at full health!")
+                    time.sleep(0.5)
+                    return
+                
+                self.player.heal(item_data["amount"]) # Otherwise heal specified amount
+                self.player.use_item(item_name)
+                self.fancy_text(f"Used {item_name}! HP restored to {self.player.health}/100")
+            
+            elif item_data["effect"] == "full_heal": # For Starlight Jug, which is used to fully heal
+                self.player.full_heal()
+                self.player.use_item(item_name)
+                self.fancy_text(f"Used {item_name}! HP fully restored to {self.player.health}/100")
+            
+            elif item_data["effect"] == "light_room": # Flashlight item
+                room = self.rooms[self.current_room]
+                if room.is_dark:
+                    self.fancy_text("You light up the room!")
+                    room.is_dark = False # Mark dark room as false since it's lit now
+                    # Remove from dark rooms set if it exists there
+                    if self.current_room in self.game_data["dark_rooms"]:
+                        self.game_data["dark_rooms"].remove(self.current_room) # Remove current room from dark rooms
+                    # Generate new normal room description
+                    self.player.use_item(item_name)
+                    # Redisplay room info
+                    self.show_status()
+                    self.fancy_text(f"Room {self.current_room:04d}: {random.choice(ROOM_TYPES)}")
+                else:
+                    self.fancy_text("No need to use this in a lit room!") # Don't use in lit rooms
+            
+            elif item_data["effect"] in ("unlock", "open_door"):
+                self.fancy_text(f"You can use {item_name} when facing a locked door!") # Lockpicks
+            
+            else:
+                self.fancy_text(f"Used {item_name}!")
+                self.player.use_item(item_name)
+                
+        except (ValueError, IndexError):
+            self.fancy_text("Invalid selection!") # Error handler
+
+        time.sleep(0.5)
+    
+    def attempt_puzzle(self, room_num):
+        """Main function for puzzle rooms"""
+        puzzle = PUZZLES[room_num] # Fetch all puzzle rooms (0025, 0050, 0075, 0100)
+        self.fancy_text(puzzle["description"])
+        
+        if room_num == 25:  # Lever puzzle
+            while True:
+                choice = input("\nWhich lever will you pull? (1-5) or H for hint: ").strip().lower()
+                
+                try:
+                    choice_int = int(choice)
+                    if 1 <= choice_int <= 5:
+                        if choice_int == puzzle["solution"]:
+                            # Right choice
+                            self.fancy_text("The path ahead opens!")
+                            self.game_data["completed_puzzles"].add(room_num)
+                            return True  # Puzzle solved
+                        else:
+                            # Wrong choice
+                            # 50% chance to damage player, 50% chance to do nothing
+                            RNG = random.random()
+                            if RNG < 0.50:
+                                self.fancy_text("Nothing happens. Try again.")
+                            else:
+                                self.player.health -= 5
+                                self.fancy_text("\nThe lever activates a trap, damaging you for 5 HP!")
+                                self.fancy_text(f"Current HP: {self.player.health}/100")
+                                
+                                # Check for death
+                                if self.player.health <= 0:
+                                    self.fancy_text("\nYou've run out of health!")
+                                    return False  # Player died
+                    else:
+                        self.fancy_text("Please enter a number between 1-5!") # Error handlers
+                except ValueError:
+                    self.fancy_text("Please enter a number between 1-5 or H for hint!") # Same with this one
+        
+        elif room_num == 50:  # Riddle at room 50
+            while True:
+                answer = input("Your answer (or H for hint): ").strip().lower()
+                if answer == 'h':
+                    self.fancy_text(f"Hint: {puzzle['hint']}")
+                    continue
+                
+                if answer == puzzle["solution"]:
+                    self.fancy_text("Correct! The way forward is clear.")
+                    time.sleep(0.5)
+                    self.game_data["completed_puzzles"].add(room_num)
+                    return True
+                else:
+                    self.fancy_text("Incorrect. Try again.")
+        
+        elif room_num == 75:  # Pressure plates at room 75
+            while True:
+                self.fancy_text("Enter the sequence (e.g., '2 4 1 3') or H for hint: ")
+                choice = input().strip().lower()
+                if choice == 'h':
+                    self.fancy_text(f"Hint: {puzzle['hint']}")
+                    continue
+                
+                try:
+                    sequence = list(map(int, choice.split())) # Arange the pressure plates into a sequence using list
+                    if sequence == puzzle["solution"]:
+                        self.fancy_text("The plates click into place!")
+                        time.sleep(0.5)
+                        self.game_data["completed_puzzles"].add(room_num)
+                        return True
+                    else:
+                        self.fancy_text("Nothing happens. Try again.")
+                except ValueError:
+                    self.fancy_text("Please enter numbers separated by spaces!")
+        
+        elif room_num == 100:  # Final puzzle before players beat game
+            while True:
+                self.fancy_text("Your answer (or H for hint): ")
+                answer = input().strip().lower()
+                if answer.lower() == 'h':
+                    self.fancy_text(f"Hint: {puzzle['hint']}")
+                    continue
+                
+                try:
+                    if int(answer) == puzzle["solution"]:
+                        # Special handling for final puzzle
+                        self.game_data["completed_puzzles"].add(room_num)
+                        self.current_room = 100  # Ensure we're at room 100
+                        self.move_forward()  # This will handle the victory outro
+                        return True
+                    else:
+                        self.fancy_text("The gate remains sealed. Try again.")
+                except ValueError:
+                    self.fancy_text("Please enter a number!")
+    
+    def show_status(self):
+        """Main function to handle status display. Part of the UI too"""
+        room = self.rooms[self.current_room]
+        # Duplicated rooms will show "Room ????", normal rooms show normal room numbers, e.g. "Room 0053"
+        room_display = "????" if room.has_duplicated_rooms else f"{self.current_room:04d}" 
+        # Status bar that's displayed to the user throughout the game. Very important!
+        self.fancy_text(f"Room: {room_display} | HP: {self.player.health}/{self.player.max_health} | Coins: {self.player.coins}") 
+        if self.player.inventory:
+            # Display inventory
+            inventory = self.player.get_consolidated_inventory()
+            # Construct a string that lists each item and its quantity in the format "ItemName xUses" (for example, "Potion x2")
+            # This is done using a list comprehension that iterates over the consolidated inventory's items and formats each entry accordingly
+            self.fancy_text("Inventory: " + ", ".join([f"{name} x{props['uses']}" for name, props in inventory.items()]))
+    
+    def show_intro(self):
+        try:
+            with open("data/intro.md", "r", encoding='utf-8') as f: # read intro from intro.md
+                intro_text = f.read() # file handling skills that we learnt in class came in clutch for this one
+                self.fancy_text(intro_text)
+                
+            while True:
+                choice = input("\nPress Enter to begin your nightmare... (or enter H for help / Q to surrender) > ").strip().lower()
+                if choice == '':
+                    return  # Start the game
+                elif choice == 'h':
+                    self.show_help() # HELPPPPP
+                    return
+                elif choice == 'q':
+                    self.fancy_text("\nThanks for checking out the game! Goodbye.") # Goodbye :(
+                    exit()
+                else:
+                    self.fancy_text("Invalid choice. Please press Enter, H, or Q.") # Invalid choice
+
+        except FileNotFoundError: # Special FileNotFoundError exception just in case if somehow intro.md is missing
+            # WHICH SHOULD NEVER HAPPEN IN THEORY, BUT I'M JUST PUTTING IT HERE TO ENSURE EXCELLENT ERROR HANDLING
+            self.fancy_text("Welcome to Rooms!") # Short and brief
+            input("\nPress Enter to begin > ")
+    
+    def show_help(self):
+        # Define the help slides
+        help_slides = [ # 4 help slides in total
+"""===== HELP GUIDE (1/4) =====
+
+Game Controls:
+W - Move forward
+S - Move backward
+L - Loot current room
+U - Use item from inventory
+""",
+"""===== HELP GUIDE (2/4) =====
+
+Game Controls (continued):
+Q - Quit game
+H - Show this help menu
+            
+Game Basics:
+- Explore 100 rooms with challenges
+- Watch your health (100 max)
+""",
+"""===== HELP GUIDE (3/4) =====
+
+Entities:
+- Various creatures inhabit the rooms
+- Each has unique behaviors
+- Some can be avoided with quick thinking
+            
+Items:
+- Find useful items while looting
+- Manage your inventory carefully
+""",
+"""===== HELP GUIDE (4/4) =====
+
+Puzzles & Obstacles:
+- Every 25 rooms contain puzzles
+- Solve them to progress
+- Some rooms have obstacles to overcome
+            
+What will you do?
+[P] Play Game
+[Q] Quit
+"""
+        ]
+        
+        current_slide = 0 # Start at slide 0
+        while True:
+            print("\033c", end='')  # Clear screen
+            self.fancy_text(help_slides[current_slide])
+            
+            if current_slide == len(help_slides) - 1:
+                # Last slide - offer play/quit options
+                choice = input("Choose: ").lower()
+                if choice == 'p':
+                    return  # Return to game
+                elif choice == 'q':
+                    self.fancy_text("\nThanks for checking out the game! Goodbye.")
+                    exit()
+                else:
+                    self.fancy_text("Invalid choice. Please press P or Q.")
+                    continue
+            else:
+                # Navigation for other slides
+                choice = input("Press D for next page or A for previous page > ").lower()
+                if choice == 'd' and current_slide < len(help_slides) - 1:
+                    current_slide += 1 # Next slide
+                elif choice == 'a' and current_slide > 0:
+                    current_slide -= 1 # Previous slide
+                elif choice in ('q', 'p'):
+                    # Allow early exit if player wants
+                    if choice == 'p':
+                        return
+                    else:
+                        self.fancy_text("\nThanks for checking out the game! Goodbye.")
+                        exit()
+                else:
+                    self.fancy_text("Invalid input. Use A/D to navigate.")
+    
+    def replay_prompt(self):
+        """Replay option after death. Quite important"""
+        while True:
+            choice = input("\nWould you like to (R) replay or (Q) quit? > ").strip().lower()
+
+            if choice == 'r': # Replay
+                while True:
+                    skipIntro = input("Skip the introduction? (Y/N) > ").strip().lower()
+                    if skipIntro == 'y': # No intro
+                        self.__init__() # Skip intro and just __init__
+                        return True
+                    elif skipIntro == 'n': # Yes intro
+                        self.__init__()  # Reset game state
+                        print("\033c", end='')  # Clear screen
+                        self.show_intro() # Show the intro again
+                        return True
+                    else:
+                        self.fancy_text("Invalid choice. Please enter Y or N.\n")  # This will loop again
+            elif choice == 'q':
+                self.fancy_text("\nThanks for playing! Goodbye.")
+                exit()
+            else:
+                self.fancy_text("Invalid choice. Please enter R or Q.")
+
+    @staticmethod
+    def fancy_text(text):
+        """
+        A fancy text function to simulate typing effect
+        I learnt this effect from Stack Overflow a few weeks ago, found it quite interesting, and adapted it for my game. Thank God I did.
+
+        This is the sole reason why so many people praised my game, I owe it too much
+        """
+        for char in text:
+            time.sleep(0.02) # Print character every 20 miliseconds
+            print(char, end='', flush=True)
+        print()
+```
+
+**main.py**
+```python
+from constants import * # Import everything from constants.py
+from functions import Game # Only need to import Game class since Player and Room will be background, game is the major class here
+import time
+
+def main():
+    """Main user interface"""
+    game = Game() # Main game functions
+    print("\033c", end='') # Clear screen
+    game.show_intro() # Intro
+    print("\033c", end='')
+    
+    while True:
+        print("\033c", end='')
+        game.show_status() # Show player the status bar
+        
+        room = game.rooms[game.current_room]
+        
+        # Handle puzzle rooms first
+        if game.current_room in PUZZLES and game.current_room not in game.game_data["completed_puzzles"]:
+            game.attempt_puzzle(game.current_room)
+            continue
+        
+        # Handle duplicated rooms event
+        if room.has_duplicated_rooms:
+            if not game.move_forward():  # This will trigger the event handling
+                continue
+        
+        # Show room description
+        game.fancy_text(room.persistent_description)
+        
+        # Handle entity, obstacle or dupe rooms event
+        if game.current_room in PUZZLES and game.current_room not in game.game_data["completed_puzzles"]:
+            if not game.attempt_puzzle(game.current_room):
+                game.fancy_text("\n💀  YOU DIED! Game over.")
+                game.fancy_text(f"You made it to Room {game.current_room:04d}")
+                game.fancy_text(f"Coins collected: {game.player.coins}")
+                if not game.replay_prompt(): # Replay or nah
+                    break
+                continue
+        elif room.has_entity:
+            if not game.handle_entity_encounter():
+                game.fancy_text("\n💀  YOU DIED! Game over.")
+                game.fancy_text(f"You made it to Room {game.current_room:04d}")
+                game.fancy_text(f"Coins collected: {game.player.coins}")
+                if not game.replay_prompt():
+                    break
+                continue
+        elif room.has_obstacle:
+            if not game.handle_obstacle():
+                game.fancy_text("\n💀  YOU DIED! Game over.")
+                game.fancy_text(f"You made it to Room {game.current_room:04d}")
+                game.fancy_text(f"Coins collected: {game.player.coins}")
+                if not game.replay_prompt():
+                    break
+                continue
+        
+        # Get player input
+        command = input("\nOptions: [W] Forward | [S] Backward | [L] Loot | [U] Use Item | [Q] Quit > ").lower()
+        
+        if command == "w":
+            if not game.move_forward(): # Forward
+                continue
+        elif command == "s":
+            game.move_backward() # Backward
+        elif command == "l":
+            game.loot_room() # Looting rooms
+        elif command == "u":
+            game.use_item() # Use item
+        elif command == "q":
+            game.fancy_text("\nThanks for playing! Goodbye.")
+            exit() # Exit
+        else:
+            game.fancy_text("Invalid command! Please enter a valid command.")
+            time.sleep(0.5) # Error handling
+
+if __name__ == "__main__":
+    main()
+```
+
 ## **End of Sprint 3 - Review Questions**
 
 ### Evaluate how effectively your project meets the functional and non-functional requirements defined in your planning.
@@ -1034,6 +2384,1376 @@ The integration process for these updates would not be difficult at all, since I
 
 ![Gantt](/images/Structure%20Charts/Updated%20Structure%20Chart.png)
 
+## **Build and Test**
+**constants.py**
+```python
+import random
+
+# Entity dictionary
+ENTITIES = {
+    "Tralalero Tralala": {
+        "damage": 5, 
+        "interaction": {
+            "prompt": "Quickly! Press R to make him retreat!",
+            "success_key": "r",
+            "success_msg": "You scared Tralalero Tralala away!",
+            "fail_msg": "You hesitated! Tralalero Tralala attacks you!"
+        }
+    },
+    "Bombardino Crocodilo": {
+        "damage": 10, 
+        "interaction": {
+            "prompt": "Press H to hide!",
+            "success_key": "h",
+            "success_msg": "You hid just in time!",
+            "fail_msg": "You didn't hide! Bombardino Crocodilo attacks you!"
+        }
+    },
+    "Boneca Ambalabu": {
+        "damage": 5, 
+        "interaction": {
+            "prompt": "Don't look! Close your eyes (press C)",
+            "success_key": "c",
+            "success_msg": "You avoided eye contact!",
+            "fail_msg": "You looked directly at Boneca Ambalabu!"
+        }
+    },
+    "Tung Tung Tung Sahur": {
+        "damage": 10, 
+        "interaction": {
+            "prompt": "Stay still! Don't press anything for 5 seconds",
+            "success_key": None,  # Special timing-based interaction
+            "success_msg": "You remained still and survived!",
+            "fail_msg": "You moved and attracted Tung Tung Tung Sahur!"
+        }
+    }
+}
+
+# Items dictionary
+ITEMS = {
+    "Flashlight": {
+        "description": "Lets you see in dark rooms",
+        "effect": "light_room"
+    },
+    "Bandage": {
+        "description": "Restores 10 HP",
+        "effect": "heal",
+        "amount": 10
+    },
+    "Lockpick": {
+        "description": "50% chance to unlock doors",
+        "effect": "unlock"
+    },
+    "Key": {
+        "description": "Opens locked doors",
+        "effect": "open_door"
+    },
+    "Starlight Jug": {
+        "description": "Fully restores your health",
+        "effect": "full_heal",
+        "special": True  # Only found in special room
+    }
+}
+
+# Obstacles dictionary
+OBSTACLES = {
+    "Broken Floor": {
+        "description": "The floor ahead is crumbling. What will you do?",
+        "options": {
+            "Jump over": {
+                "success_chance": 0.5, 
+                "success": "You made it across safely!", 
+                "fail": "You fell and took some damage!", 
+                "damage": 10
+            },
+            "Go around": {
+                "time_cost": "You take a much longer path, losing some coins.", 
+                "coin_loss": (7, 13)
+            },
+        }
+    },
+    "Locked Door": {
+        "description": "A sturdy locked door blocks your path.",
+        "options": {
+            "Use lockpick": {
+                "item_required": "Lockpick", 
+                "success_chance": 0.5, 
+                "success": "The lock clicks open!", 
+                "fail": "The lockpick broke!"
+            },
+            "Search for key": {
+                "success_chance": 0.3, 
+                "success": "You found a key!", 
+                "fail": "No key here.", 
+                "time_cost": "You wasted time searching."
+            },
+            "Break door": {
+                "strength_check": 0.4, 
+                "success": "You broke the door down!", 
+                "fail": "The door breaks open, but you hurt your leg from kicking it too hard.", 
+                "damage": 10
+            }
+        }
+    },
+    "Collapsed Ceiling": {
+        "description": "Rubble blocks your path. How will you proceed?",
+        "options": {
+            "Climb over": {
+                "success_chance": 0.6,
+                "success": "You carefully climb over the debris!",
+                "fail": "You slip and take damage!",
+                "damage": 10
+            },
+            "Clear a path": {
+                "time_cost": "It takes time to clear the path.",
+                "damage": 5
+            }
+        }
+    }
+}
+
+# Room descriptions
+ROOM_TYPES = [
+    "A dimly lit hallway with flickering lights.",
+    "A spacious chamber with strange markings on the walls.",
+    "A narrow passageway that creaks with every step.",
+    "A circular room with an eerie humming sound.",
+    "A damp corridor with water dripping from the ceiling.",
+    "The thick layer of dust on every surface suggests no one has been here in years. Your footsteps leave clear prints.",
+    "A cramped hotel room lie before you. You have to turn sideways to get through some sections.",
+    "A formal conference room with a large table and high-backed chairs.",
+    "A long, narrow aisle with torches spaced evenly along the walls."
+]
+
+# Dark room descriptions
+DARK_ROOM_DESCRIPTIONS = [
+    "Pitch black... you can't see anything. Who knows what might lurk here?",
+    "Complete darkness surrounds you. You shiver in fear as you hear quiet whispers of God-knows-what.",
+    "The lights have gone out completely. You are completely engulfed in darkness.",
+]
+
+# Special room puzzles
+PUZZLES = {
+    25: {
+        "description": "You see five levers on the wall. Only one opens the path forward.",
+        "solution": random.randint(1, 5),
+        "hint": "Some levers can be dangerous. Choose wisely!"
+    },
+    50: {
+        "description": "A riddle is inscribed on the wall: 'I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?'",
+        "solution": "echo",
+        "hint": "It's what you hear in mountains and caves."
+    },
+    75: {
+        "description": "There are four pressure plates on the floor. Step on the correct sequence to proceed.",
+        "solution": [2, 4, 1, 3],
+        "hint": "The sequence forms a simple pattern."
+    },
+    100: {
+        "description": "The final challenge! Solve this math puzzle: What is the sum of the first 10 prime numbers?",
+        "solution": 129,
+        "hint": "The primes are: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29"
+    }
+}
+
+# Special rooms with their unique properties
+SPECIAL_ROOMS = {
+    49: {
+        "description": "Preparation Room: A safe space before the big puzzle.",
+        "is_safe": True
+    },
+    51: {
+        "description": "Grand Throne Room: Where the king once resided.",
+        "is_safe": True,
+        "special_item_chance": 0.3
+    },
+    52: {
+        "description": "Levin's Shop: A place to spend your hard-earned coins.",
+        "is_safe": True,
+        "shop_items": {
+            "Bandage": 10,
+            "Lockpick": 15,
+            "Flashlight": 20
+        }
+    },
+    99: {
+        "description": "Final Preparation Room: Rest before the last challenge.",
+        "is_safe": True,
+        "heal_amount": 50
+    }
+}
+
+# In constants.py, remove Brr Brr Patapim from ENTITIES and add:
+DUPLICATED_ROOMS_EVENT = {
+    "description": "The room number is obscured... something feels wrong here. Very wrong indeed.",
+    "consequence": {
+        "damage": 10,
+        "message": "Brr Brr Patapim attacks you from the fake door!"
+    }
+}
+```
+
+**functions.py**
+
+Warning: This code will be very long, but don't freak out, **I've written way more complicated programs before**
+```python
+# Some of the code here is SO complicated that I literally have to take inspiration by looking at the source code for the original Doors game in Roblox Studio.
+# Gotta say, I hope the 3 all-nighters I pulled for this task will be worth it.
+# My brain is literally burning right now, I am not joking.
+# Also, special thanks to QuackGod on Discord and a few other people for helping me with some sections of this code!
+
+# All of these modules right here are part of the standard Python library
+# They do NOT need to be pip installed!
+# This means that I don't need to write a requirements.txt file, since there is literally nothing needed for the player to install
+# They can literally just download the program, then run it as soon as they import it to VS Code
+
+import time # For time.sleep functions
+import random # RNG for entities and obstacles
+import msvcrt # Msvcrt is useful for non-blocking input in Windows
+
+# Msvcrt is very useful for my entity functions, since when the player comes across an entity,
+# they wouldn't need to press Enter after using the key
+# For example, if the player comes across Boneca Ambalabu, they'll just need to press the C key in order to avoid him
+# They wouldn't need to press C then enter, thanks to the msvcrt module
+# If I didn't use msvcrt, then the player would have to type C then enter, which could be really inefficient
+# Since the player is only allowed 3 seconds in order to avoid the entity, otherwise they take damage
+# With msvcrt, the p0layer can just press the C key, and it would register as the player input without having to hit enter
+
+# These two modules will be used as an alternative to msvcrt since msvcrt is Windows-only
+# These two are used for any other OS other than Windows
+import sys
+import select
+
+from constants import * # Import everything from constants.py
+
+# The main player class that manages health, inventory, and special room visits
+class Player:
+    def __init__(self): # Initalize player with default values
+        self.health = 100 # Starting health
+        # Maximum possible health. This is added so that using the bandage can't exceed the maximum health
+        # For example, if the player has 98 HP and uses a bandage which heals 10 HP, the player can only heal 2 HP back to 100, not exceeding it.
+        self.max_health = 100
+        self.inventory = [] # List of items in player inventory
+        self.coins = 0 # Starting coin amount
+        self.special_room_visited = False # Special room tracker that tracks if players has visited any special rooms (such as Room 051)
+        # Mark false because the player hasn't visited any special rooms on start        
+
+    # --------------------- ITEM MANAGEMENT -----------------------------
+
+    def add_item(self, item_name, uses=1): # Add item to inventory
+        # Check if item already exists in inventory
+        existing_item = next((item for item in self.inventory if item["name"] == item_name), None) # Loop through inventory to find item by their name
+        if existing_item:
+            # If items exists, increase its uses. For example, if the player collected a bandage and they already have two, then make it three uses.
+            existing_item["uses"] += uses
+        else:
+            self.inventory.append({"name": item_name, "uses": uses}) # Otherwise just add it to their inventory with name and uses displayed
+    
+    def use_item(self, item_name): # Use the item
+        item = next((item for item in self.inventory if item["name"] == item_name), None) # Once again, loop through the inventory to find the item by their name
+        if item:
+            item["uses"] -= 1 # Minus a use from the item
+            if item["uses"] <= 0: # If the item has no uses left, remove it from the inventory
+                self.inventory.remove(item)
+            return True
+        return False # If the item doesn't even exist, return False
+    
+    def has_item(self, item_name):
+        return any(item["name"] == item_name for item in self.inventory)
+    
+    def get_consolidated_inventory(self): # Consolidate the inventory to show items with their total uses
+        consolidated = {} # Create an empty dictionary to store consolidated items
+        for item in self.inventory:
+            if item["name"] in consolidated: # If the item already exists in the consolidated dictionary, add its uses to the existing entry
+                consolidated[item["name"]]["uses"] += item["uses"]
+            else:
+                # Otherwise, add the item to the consolidated dictionary with its uses and description
+                consolidated[item["name"]] = {
+                    "uses": item["uses"], 
+                    "description": ITEMS[item["name"]]["description"]
+                }
+        return consolidated # Return the consolidated inventory dictionary to the player
+    
+    def take_damage(self, amount):  # Take damage from an entity, obstacle or event
+        self.health -= amount
+        return self.health > 0
+    
+    def heal(self, amount): # Heal the player by a certain amount
+        self.health = min(self.max_health, self.health + amount) # Make sure the health doesn't exceed the maximum health
+    
+    def full_heal(self): # Full heal mechanic for the Starlight Jug item which heals all player's health
+        self.health = self.max_health
+
+class Room:
+    def __init__(self, number, persistent_room_types, game_data):  # Add game_data parameter
+        self.number = number # Room number
+        self.visited = False # Mark visited rooms as false
+        self.looted = False # Mark looted rooms as false
+        self.is_dark = False # Mark dark rooms as false
+        self.has_entity = False # Mark rooms with entity false
+        self.has_obstacle = False # Mark rooms with obstacle false
+        self.entity = None # Mark entity as None since they don't spawn at start
+        self.obstacle = None # Mark obstacle as None for the same reason
+        self.is_special = number in SPECIAL_ROOMS # Check if the room is a special room
+        self.is_puzzle = number in PUZZLES # Check if the room is a puzzle room
+        self.persistent_description = persistent_room_types[number] # This function right here will generate persistent descriptions
+
+        # The generate_room_description function used to be able to generate persistent room descriptions in Sprint 1 and 2
+        # But since I added classes in Sprint 3, there was an issue with the persistent descriptions not being generated correctly
+        # I think this was due to the fact that the persistent descriptions in the generate_room_description function were generated before the game_data was passed to the Room class
+        # And the easiest solution for this, as far as I can tell from all the research, is to pass the game_data to the Room class by adding a game_data parameter to the __init__ function, like how I did it here.
+
+        self.game_data = game_data  # Store game_data reference
+        self.has_duplicated_rooms = False # The duplicated rooms event tracker. 
+        # Duplicated rooms wasn't added as an obstacle because it behaves differently than other obstacles
+    
+    def spawn_entity(self):
+        """
+        Spawns an entity in the current room
+
+        If the room is dark, there is a 60% chance to spawn a dark-favored entity.
+        Otherwise, a random entity is chosen from the available entities.
+        Marks the room as having an entity and records the spawn in game data.
+
+        Will not spawn obstacles in special rooms, puzzle rooms or rooms 000 and 100.
+        This function will be called in the enter_room function. When it lands on the random chance,
+        this function will be used to mark has_obstacles to True
+        then, after it's marked as True, move_forward will call the handle_duplicated_rooms function
+        which will then do all the event-related stuff, such as sending the display to the player
+        """
+        self.has_entity = True # Mark has_entity as true
+        if self.is_dark: # If the room is a dark room
+            dark_favored = ["Boneca Ambalabu", "Tung Tung Tung Sahur"] # Boneca Ambalabu and Tung Sahur will be set as dark favored entities
+            # 60% chance for dark favored entity, otherwise choose an entity from the entity list that is not dark favored
+            self.entity = random.choice(dark_favored if random.random() < 0.6 else [e for e in ENTITIES if e not in dark_favored])
+        else:
+            self.entity = random.choice(list(ENTITIES.keys())) # For normal, lit rooms, choose whatever entity
+        self.game_data["entity_spawned_rooms"].add(self.number) # Add room number as having had an entity
+
+    def spawn_obstacle(self):
+        """
+        Main function for obstacle spawning
+        
+        Will not spawn obstacles in special rooms, puzzle rooms or rooms 000 and 100.
+        This function will be called in the enter_room function. When it lands on the random chance,
+        this function will be used to mark has_obstacles to True
+        then, after it's marked as True, move_forward will call the handle_duplicated_rooms function
+        which will then do all the event-related stuff, such as sending the display to the player
+        """
+        if (self.number in (0, 100) or self.is_special or self.is_puzzle):
+            return False # Return false for these rooms
+        # Otherwise mark as true, and generate a random obstacle
+        self.has_obstacle = True
+        self.obstacle = random.choice(list(OBSTACLES.keys()))
+        # Add current room to obstacle-spawned rooms in game data
+        self.game_data["obstacle_spawned_rooms"].add(self.number)
+
+    def spawn_duplicated_rooms_event(self):
+        """
+        Main function controlling the duplicated rooms event
+        
+        This function will be called in the enter_room function. When it lands on the random chance,
+        this function will be used to mark has_duplicated_rooms to True
+        then, after it's marked as True, move_forward will call the handle_duplicated_rooms function
+        which will then do all the event-related stuff, such as sending the display to the player
+        """
+        if (self.is_special or self.is_puzzle or self.number in (0, 100)):
+            return False # Once again we wanna return false for any of the rooms listed above
+        self.has_duplicated_rooms = True
+        self.game_data["event_spawned_rooms"].add(self.number) # Add current room to event spawned list
+
+    @staticmethod
+    # A static method is a method that belongs to a class but does not operate on instances of that class. 
+    # It does not require a reference to the instance (self) or the class (cls) as its first parameter. 
+    def get_room_description(self, game):
+        """Generate room types that will persist for the entire game"""
+        room_types = {}
+        for room_number in range(101):
+            if room_number == 0: # Room 0000
+                room_types[0] = "Reception Area: A creaky wooden door behind you."
+            elif room_number == 100: # Room 0100
+                room_types[100] = "You stumble into the outside, seeing a massive gate covered in angelic symbols in front of you."
+            elif room_number in SPECIAL_ROOMS: # Special room
+                room_types[room_number] = SPECIAL_ROOMS[room_number]["description"]
+            elif room_number in PUZZLES: # Puzzle room
+                room_types[room_number] = f"Room {room_number:04d}: {PUZZLES[room_number]['description']}"
+            elif room_number in self.game_data["dark_rooms"]: # Dark room
+                room_types[room_number] = f"⚠️  DARK ROOM: {random.choice(DARK_ROOM_DESCRIPTIONS)}"
+            elif room_number == game.starlight_room: # Starlight room
+                room_types[room_number] = f"💫  STARLIGHT ROOM: This room glows with golden light. Maybe a good idea to loot?"
+            else: # Any other normal room
+                room_types[room_number] = f"Room {room_number:04d}: {random.choice(ROOM_TYPES)}"
+        return room_types
+        # Also, round every room number to 4 d.p. as a convention to the original Doors game
+    
+    def handle_duplicated_rooms(self, game):
+        """
+        The main function for the duplicated room event.
+        
+        This code was pulled and slightly modified from the original source code for a 
+        collaborative sandbox game me and some other friends made around 2 years ago
+        """
+        # The real next room is supposed to be the one after the current room
+        # So that means it should be the current room + 1
+        # If the player comes across this event at Room 045, the next room should be 046, shouldn't it?
+        real_next_room = self.number + 1
+        
+        # Generate potential fake room numbers that could be shown to player
+
+        # Criteria for fake rooms:
+        # - Must be within 1-100 range
+        # - Can't be special/puzzle rooms
+        # - Can't be the actual next room
+        # - Initially looks 3 rooms ahead (n+1 to n+3)
+        possible_fakes = [
+            n for n in range(self.number + 1, self.number + 4) 
+            if n <= 100 and 
+            n not in SPECIAL_ROOMS and 
+            n not in PUZZLES and 
+            n != real_next_room
+        ]
+        
+        # If we don't have enough forward rooms, allow some backward options
+        if len(possible_fakes) < 2:
+            possible_fakes += [
+                n for n in range(self.number - 2, self.number) 
+                if n > 0 and 
+                n not in SPECIAL_ROOMS and 
+                n not in PUZZLES and 
+                n != real_next_room
+            ]
+        
+        # Make sure we have exactly 2 fake rooms
+        fake_rooms = random.sample(possible_fakes, min(2, len(possible_fakes)))
+        
+        # Create door options (1 real, 2 fake)
+        doors = [real_next_room] + fake_rooms
+        random.shuffle(doors) # Random module's shuffle function is EXTREMELY useful here!
+        # Without shuffle I don't know how else I'm supposed to have created this function
+        
+        game.fancy_text("\nThe room number is obscured... something feels wrong here.")
+        game.fancy_text("You see three doors ahead:")
+        
+        # Display ALL the door options
+        for i, door in enumerate(doors, 1):
+            game.fancy_text(f"{i}. Room {door:04d}") # 4 decimal places as usual
+        
+        # Main choice loop - repeats until valid choice or player dies
+        while True:
+            try:
+                # The code right here is a bit complex but since I kind of just copied them from an old game I'll do whatever
+                choice = int(input("Choose a door (1-3): "))
+                if 1 <= choice <= 3:
+                    selected_room = doors[choice-1] # Convert to a 0-based index.
+                    
+                    if selected_room == real_next_room: # Success scenario
+                        game.fancy_text("You chose the correct door!")
+                        self.has_duplicated_rooms = False
+                        return selected_room  # Return the real room number
+                    else: # Handle wrong choice
+                        # Apply damage while checking for death
+                        game.fancy_text(DUPLICATED_ROOMS_EVENT["consequence"]["message"] + " You lost 10 HP!")
+                        if not game.player.take_damage(DUPLICATED_ROOMS_EVENT["consequence"]["damage"]):
+                            return None  # Player died
+                        game.fancy_text(f"Current HP: {game.player.health}/{game.player.max_health}")
+                        
+                        # Show doors again after wrong choice
+                        game.fancy_text("\nThe three doors remain:")
+                        for i, door in enumerate(doors, 1):
+                            game.fancy_text(f"{i}. Room {door:04d}")
+                else: # Error handlers
+                    game.fancy_text("Please enter a number between 1 and 3")
+            except ValueError:
+                game.fancy_text("Invalid input! Please enter a number")
+
+class Game:
+    """
+    The main game class. 
+    
+    This is the most important class since it's in control of everything in the game's nature.
+    """
+    def __init__(self): # Initialize everything
+        self.player = Player()
+        self.current_room = 0
+        self.game_data = { # ALL THE MOST IMPORTANT GAME DATA IS STORED HERE
+            "visited_rooms": set(),
+            "looted_rooms": set(),
+            "dark_rooms": set(),
+            "completed_puzzles": set(),
+            "entity_spawned_rooms": set(),
+            "obstacle_spawned_rooms": set(),
+            "event_spawned_rooms": set()
+        }
+        
+        # Generate starlight room FIRST
+        self.starlight_room = self.generate_starlight_room()
+        
+        # Then generate dark rooms
+        self.generate_dark_rooms()
+        
+        # Then create rooms with this information
+        self.persistent_room_types = Room.get_room_description(self, self)
+        self.rooms = {i: Room(i, self.persistent_room_types, self.game_data) for i in range(101)}
+        self.setup_special_rooms()
+    
+    def setup_special_rooms(self): # Configuration function for special rooms
+        # For every room number in the special rooms list, make sure they aren't dark, doesn't have an entity, obstacle or room event
+        for room_num in SPECIAL_ROOMS:
+            room = self.rooms[room_num]
+            room.is_dark = False
+            room.has_entity = False
+            room.has_obstacle = False
+            room.has_duplicated_rooms = False
+
+    def generate_dark_rooms(self):
+        possible_rooms = list(range(1, 100)) # Possible rooms range from 001 to 100
+        
+        # Remove special rooms and puzzle rooms from possible dark rooms
+        excluded_rooms = set(SPECIAL_ROOMS.keys()).union(set(PUZZLES.keys()))
+        possible_rooms = [r for r in possible_rooms if r not in excluded_rooms]
+        
+        # Select dark rooms
+        dark_rooms = set(random.sample(possible_rooms, 10))
+        
+        # Make some dark rooms consecutive
+        for room in list(dark_rooms):
+            if random.random() < 0.3 and room < 99:  # 30% chance to have consecutive dark rooms
+                new_room = room + 1 # Consecutive function
+                if new_room not in excluded_rooms:
+                    dark_rooms.add(new_room)
+        
+        self.game_data["dark_rooms"] = dark_rooms  # Store the dark rooms in game_data
+    
+    def generate_starlight_room(self):
+        """Generate a random room for the Starlight Jug"""
+        # Rooms where Starlight Jug cannot appear (special rooms and puzzle rooms)
+        excluded_rooms = {0, 25, 49, 50, 51, 52, 75, 99, 100}
+        # All possible rooms between 1-99 that aren't excluded
+        possible_rooms = [r for r in range(1, 100) if r not in excluded_rooms]
+        # Randomly select one room from possible candidates
+        return random.choice(possible_rooms)
+    
+    def move_forward(self):
+        """Basic function for moving forward"""
+        room = self.rooms[self.current_room]
+        
+        if room.has_duplicated_rooms: # If the room has the duplicated rooms event
+            result = room.handle_duplicated_rooms(self) # Call the handle dupe rooms function to handle dupe rooms
+            if result is None:  # Player died
+                return False
+            self.current_room = result # Dupe rooms process
+            self.game_data["visited_rooms"].add(self.current_room) # Add room into visited rooms list
+            self.fancy_text(f"Moved forward to Room {self.current_room:04d}.") # 4 d.p.
+            time.sleep(0.5) # Short pause
+            self.enter_room() # Enter new room by using enter room function
+            return True
+        
+        if self.current_room < 100: # If the room is just a normal room
+            next_room = self.current_room + 1 # Progression by adding 1. For example, Room 0045 --> Room 0046
+            self.current_room = next_room
+            self.game_data["visited_rooms"].add(self.current_room) # Mark visited
+            self.fancy_text(f"Moved forward to Room {self.current_room:04d}.")
+            time.sleep(0.5)
+            self.enter_room()
+            return True
+        else: # IF THE PLAYER BEATS THE GAME
+            outro_text = (
+                "\nYou've reached the exit beyond Room 100!\n"
+                "Congratulations! You've beaten the game!\n\n"
+                "Thanks for playing!"
+            )
+            self.fancy_text(outro_text)
+            self.replay_prompt()
+            return False
+    
+    def move_backward(self):
+        """Basic function for moving backward"""
+        if self.current_room > 0: 
+            # If in a room that's not 0 then decrease room number by 1 every time player goes back
+            self.current_room -= 1
+            self.fancy_text(f"Moved backward to Room {self.current_room:04d}.")
+            time.sleep(0.5)
+            self.enter_room()
+            return True
+        else: # For Room 0000
+            self.fancy_text("The door behind you is blocked. You can't turn back now.")
+            time.sleep(0.5)
+            return False # Mark as false because player won't be allowed to move back
+    
+    def enter_room(self):
+        """A very important function to handle stuff when player enters new room"""
+        # Mark room as visited as soon as player enters
+        room = self.rooms[self.current_room]
+        room.visited = True
+        self.game_data["visited_rooms"].add(self.current_room)
+        
+        # Set room darkness based on game_data
+        room.is_dark = self.current_room in self.game_data["dark_rooms"]
+        
+        # Handle special room effects
+        if self.current_room in SPECIAL_ROOMS:
+            self.handle_special_room()
+            return
+        
+        # Only spawn events/entities/obstacles if first visit
+        if (self.current_room not in self.game_data["entity_spawned_rooms"] and 
+            self.current_room not in self.game_data["obstacle_spawned_rooms"] and
+            self.current_room not in self.game_data["event_spawned_rooms"] and
+            not room.is_special and not room.is_puzzle):
+            
+            spawn_roll = random.random() # Will decide if an entity/obstacle/room event will spawn
+
+            if room.is_dark: # Dark rooms
+                if spawn_roll < 0.60:
+                    # Try different spawns with adjusted probabilities
+                    spawn_roll2 = random.random()
+                    if spawn_roll2 < 0.10:  # 10% duplicated rooms
+                        room.spawn_duplicated_rooms_event()
+                    elif spawn_roll2 < 0.80:  # 70% entities (10-80)
+                        room.spawn_entity()
+                    else:  # 20% obstacles (80-100)
+                        room.spawn_obstacle()
+            elif self.current_room >= 90: # Rooms after 0089
+                if spawn_roll < 0.50:
+                    spawn_roll2B = random.random()
+                    if spawn_roll2B < 0.10:  # 10% duplicated rooms
+                        room.spawn_duplicated_rooms_event()
+                    elif spawn_roll2B < 0.70:  # 60% entities (10-70)
+                        room.spawn_entity()
+                    else:  # 30% obstacles (70-100)
+                        room.spawn_obstacle()
+            else: # 0001-0089 that's not a dark room, puzzle or special rooms
+                if spawn_roll < 0.30:
+                    spawn_roll2C = random.random()
+                    if spawn_roll2C < 0.30:  # 30% duplicated rooms
+                        room.spawn_duplicated_rooms_event()
+                    elif spawn_roll2C < 0.70:  # 40% entities (30-70)
+                        room.spawn_entity()
+                    else:  # 30% obstacles (70-100)
+                        room.spawn_obstacle()
+    
+    def handle_special_room(self):
+        """Main function to handle special rooms"""
+        room_num = self.current_room
+        room_data = SPECIAL_ROOMS.get(room_num, {}) # Fetch special rooms info from the list
+        
+        if room_num == 49:  # Preparation room
+            self.fancy_text("\nThis is a safe room to prepare for the upcoming puzzle.")
+        
+        elif room_num == 51:  # Throne room
+            if not self.player.special_room_visited and random.random() < room_data.get("special_item_chance", 0): # Find a rare item in the throne room
+                self.fancy_text("\nYou found a rare item in the throne room!")
+                self.player.add_item(random.choice(list(ITEMS.keys()))) # Plot twist: the item is not rare at all (it's literally just a random common item)
+                self.player.special_room_visited = True # Mark special rooms as true
+        
+        elif room_num == 52:  # Levin's Shop
+            self.visit_shop()
+        
+        elif room_num == 99:  # Final preparation room
+            heal_amount = room_data.get("heal_amount", 0) # Fetch the heal amount from the room data
+            self.player.heal(heal_amount) # Heal fuunction
+            self.fancy_text(f"\nYou feel refreshed! +{heal_amount} HP") # Immediately heal player up when they reach room 0099 as a reward for getting that far
+    
+    def visit_shop(self):
+        """
+        Function to handle Levin's Shop
+        
+        This code was ripped off from the economy game function of a Discord bot I made in Python a few years prior.
+        """
+        self.fancy_text("\nWelcome to Levin's Shop!")
+        self.fancy_text(f"Your coins: {self.player.coins}") # Retrieve coin amount from player class
+        
+        shop_items = SPECIAL_ROOMS[52]["shop_items"]
+        while True:
+            self.fancy_text("\nAvailable items:") # Display all items
+            for i, (item, price) in enumerate(shop_items.items(), 1): 
+                # Loop through each available item in the shop
+                # Display their item name and price as well as description
+                self.fancy_text(f"{i}. {item} - {price} coins ({ITEMS[item]['description']})")
+            
+            self.fancy_text("0. Exit shop") # Exit
+            
+            try:
+                choice = int(input("\nWhat would you like to buy? "))
+                if choice == 0:
+                    break # Exit function
+                
+                # Convert the shop's item keys to a list and using the player's choice (minus one, since lists are zero-indexed) to get the correct item.
+                item_name = list(shop_items.keys())[choice-1]
+                price = shop_items[item_name]
+                
+                # If the player has enough coins, the item's price is subtracted from their coin total, the item is added to their inventory
+                if self.player.coins >= price:
+                    self.player.coins -= price
+                    self.player.add_item(item_name)
+                    self.fancy_text(f"You bought {item_name}!")
+                else:
+                    self.fancy_text("Not enough coins!") # Not enough coins
+            except (ValueError, IndexError):
+                self.fancy_text("Invalid choice!") # Error handler for invalid inputs
+
+    def handle_entity_encounter(self):
+        """Main function for handling entity encounters"""
+        room = self.rooms[self.current_room]
+        if not room.has_entity:
+            return True # Return true if room has entity
+            
+        # Entity variables
+        entity_name = room.entity
+        entity_data = ENTITIES[entity_name]
+        interaction = entity_data["interaction"]
+        
+        self.fancy_text(f"\nOh no! {entity_name} appears!")
+        self.fancy_text(interaction["prompt"])
+        
+        # Special case for Tung Sahur (timing-based)
+        if entity_name == "Tung Tung Tung Sahur":
+            start_time = time.time()
+            end_time = start_time + 5  # 5 second challenge
+            
+            try:
+                # Windows version using msvcrt
+                while time.time() < end_time:
+                    if msvcrt.kbhit():  # If any key was pressed
+                        _ = msvcrt.getch()  # Clear the keypress
+                        self.fancy_text(interaction["fail_msg"])
+                        return self.resolve_entity_damage(entity_data)
+                    
+                # If we get here, no keys were pressed
+                self.fancy_text(interaction["success_msg"])
+                room.has_entity = False
+                return True
+            except ImportError:
+
+                # Msvcrt is a Windows-based module. Computers running MacOS or Linux would not be able to use Msvcrt, which could result in import errors
+                # So this is directed to specifically computers running these OS systems, since they wouldn't be able to use Msvcrt unless they're on Windows
+                # In this case, we will use sys stdin as a workaround to this issue
+                # The following code works basically the same as to the code above, just modified to fit sys-stdin into the code.
+
+                # Unix version using sys and select
+                while time.time() < end_time:
+                    if select.select([sys.stdin], [], [], 0)[0]: # this code was kind of copied from Stack Overflow but anyways
+                        _ = sys.stdin.read(1)  # Clear the keypress
+                        self.fancy_text(interaction["fail_msg"])
+                        return self.resolve_entity_damage(entity_data)
+                    
+                # If we get here, no keys were pressed
+                self.fancy_text(interaction["success_msg"])
+                room.has_entity = False
+                return True
+        
+        # NOW FOR ANY ENTITY THAT IS NOT TUNG SAHUR
+
+        # Set time limit for response (3 seconds)
+        self.fancy_text("\nYou have 3 seconds to respond!")
+        start_time = time.time()
+
+        # The following code is learnt and written from YouTube tutorials
+        
+        try:
+            # For Windows
+            end_time = start_time + 3
+            while time.time() < end_time:
+                if msvcrt.kbhit():  # Check if key was pressed
+                    user_input = msvcrt.getch().decode().lower()
+                    if user_input == interaction["success_key"]:
+                        self.fancy_text(interaction["success_msg"])
+                        room.has_entity = False
+                        return True
+                    else:
+                        break  # Wrong key pressed
+            # Time ran out or wrong key
+            self.fancy_text("\nTime's up or wrong key!")
+            self.fancy_text(interaction["fail_msg"])
+            return self.resolve_entity_damage(entity_data)
+        except ImportError:
+            # Unix/non-Windows OS (sys and select instead of msvcrt)
+            end_time = start_time + 3
+            while time.time() < end_time:
+                if select.select([sys.stdin], [], [], 0)[0]: # Copied off internet my bad
+                    user_input = sys.stdin.read(1).lower()
+                    if user_input == interaction["success_key"]:
+                        self.fancy_text(interaction["success_msg"])
+                        room.has_entity = False
+                        return True
+                    else:
+                        break  # Wrong key pressed
+            # Time ran out or wrong key
+            self.fancy_text("\nTime's up or wrong key!")
+            self.fancy_text(interaction["fail_msg"])
+            return self.resolve_entity_damage(entity_data) # Resolve entity damage
+    
+    def resolve_entity_damage(self, entity_data):
+        """Resolve entity damage with this function"""
+        damage = entity_data["damage"] # Fetch damage
+        self.player.health -= damage # Deduct damage from player HP
+        self.fancy_text(f"You lost {damage} HP! (Current HP: {self.player.health})")
+        
+        if self.player.health <= 0:
+            return False # If health less than 0, just die.
+        return True # Otherwise keep going
+    
+    def handle_obstacle(self):
+        """
+        Handles obstacle encounters in the current room.
+        Presents obstacle description and available options to player,
+        processes their choice, and resolves the outcome.
+        """
+        
+        # Get reference to current room object
+        room = self.rooms[self.current_room]
+        
+        # Early return if no obstacle exists in this room
+        if not room.has_obstacle:
+            return True  # No obstacle to handle
+        
+        # Get obstacle details from constants
+        obstacle_name = room.obstacle
+        obstacle_data = OBSTACLES[obstacle_name]
+
+        # Display obstacle description to player
+        self.fancy_text(f"\n{obstacle_data['description']}")
+        
+        # Main interaction loop - continues until obstacle is resolved
+        while True:  
+            # Get all available options for this obstacle
+            options = list(obstacle_data["options"].items())
+
+            # Display each option with numbered choices (starting at 1)
+            for i, (option, _) in enumerate(options, 1):
+                self.fancy_text(f"{i}. {option}")
+
+            try:
+                # Get player's choice (convert to 0-based index)
+                choice = int(input("\nChoose an option: ")) - 1
+                
+                # Validate choice is within available options range
+                if 0 <= choice < len(options):
+                    # Get details of selected option
+                    option_name, outcome = options[choice]
+                    
+                    # Resolve the outcome of chosen option
+                    success = self.resolve_obstacle_outcome(option_name, outcome)
+
+                    if success:
+                        # Clear obstacle flag if successfully resolved
+                        room.has_obstacle = False
+                        return True  # Obstacle cleared
+        
+                    # If not successful, loop continues to retry
+                else:
+                    # Handle out-of-range number input
+                    self.fancy_text("Invalid choice! Please pick a valid option.\n")
+                    
+            except ValueError:
+                # Handle non-numeric input
+                self.fancy_text("Please enter a number!\n")
+    
+    def resolve_obstacle_outcome(self, option_name, outcome):
+        # Check for item requirement first
+        # This part is specifically for lockpicks against locked-door obstacle
+        if "item_required" in outcome:
+            if not self.player.has_item(outcome["item_required"]):
+                self.fancy_text(f"You need a {outcome['item_required']}!")
+                return False
+            
+            self.player.use_item(outcome["item_required"])
+        
+        # Handle success chance
+        if "success_chance" in outcome:
+            if random.random() <= outcome["success_chance"]:
+                self.fancy_text(outcome["success"])
+                
+                # Special case for finding key
+                # Not up to my expectations for this part but had to go like this because I was running out of time
+                # And this was the easiest to code as well
+                if option_name == "Search for key" and outcome["success"] == "You found a key!":
+                    self.player.add_item("Key")
+                return True
+            else:
+                # Fail scenario
+                self.fancy_text(outcome["fail"])
+                if "damage" in outcome:
+                    return self.player.take_damage(outcome["damage"]) # Take damage
+                return True
+        
+        # Handle time cost outcomes
+        if "time_cost" in outcome:
+            self.fancy_text(outcome["time_cost"]) # Another fail scenario right here
+            if "coin_loss" in outcome:
+                loss = random.randint(*outcome["coin_loss"]) # Lose some coins as the fail scenario
+                self.player.coins = max(0, self.player.coins - loss) # Player's coins after coin loss cannot go below 0
+                self.fancy_text(f"Lost {loss} coins!")
+        
+        # Handle damage from actions
+        if "damage" in outcome:
+            return self.player.take_damage(outcome["damage"])
+        
+        return True
+    
+    def loot_room(self):
+        """Loot room function. Part of the user interface and is very important"""
+        room = self.rooms[self.current_room]
+        if room.looted: # If room is already looted:
+            self.fancy_text("You've already looted this room. You can't seem to find anything else.")
+            time.sleep(0.5)
+            return
+            
+        # Check for Starlight Jug in special room
+        if self.current_room == self.starlight_room and not self.player.has_item("Starlight Jug"):
+            self.fancy_text("\nAmong the items, you find the legendary Starlight Jug!")
+            time.sleep(0.5)
+            self.player.add_item("Starlight Jug") # Add Jug to inventory
+            room.looted = True # Set looted to true
+            return
+        
+        # Guaranteed coins
+        coins_found = random.randint(2, 5)
+        self.player.coins += coins_found # Add 2-5 coins to inventory
+        self.fancy_text(f"\nFound {coins_found} coins!")
+        
+        # Determine if player gets an item or encounters Peter (mutually exclusive)
+        outcome = random.random()
+        
+        if outcome <= 0.35:  # 35% chance for item
+            # Random item
+            item = random.choice(list(ITEMS.keys()))
+            # Don't give Starlight Jug as random loot
+            while item == "Starlight Jug":
+                item = random.choice(list(ITEMS.keys()))
+                
+            # Add the loot into the player inventory
+            self.player.add_item(item)
+            self.fancy_text(f"Among the coins, you discover a {item}! ({ITEMS[item]['description']})")
+        
+        elif outcome > 0.85:  # 15% chance for Peter the Spider to appear and attack
+            damage = random.randint(3, 5) # Random 3-5 damage
+            self.player.health -= damage # Deal damage
+            self.fancy_text(f"\nPeter the Spider jumps out and scratches you! (-{damage} HP)")
+            self.fancy_text(f"He quickly scurries away into the darkness...")
+            self.fancy_text(f"Current HP: {self.player.health}/100")
+        
+        room.looted = True # Set room looted to true
+        time.sleep(0.5)
+        self.game_data["looted_rooms"].add(self.current_room) # Add the current room to looted room
+
+    def use_item(self):
+        """Main use item function. Part of user interface and very important"""
+        if not self.player.inventory: # If nothing is in inventory
+            self.fancy_text("Your inventory is empty!")
+            time.sleep(0.5)
+            return
+            
+        inventory = self.player.get_consolidated_inventory() # Fetch the player's consolidated inventory
+        self.fancy_text("\nAvailable items:")
+        # Loop through the consolidated inventory using enumerate, which provides both an index (starting from 1) and the item data. 
+        # For each item, print a line showing the item's number in the list, its name, the total number of uses as well as description
+        for i, (name, props) in enumerate(inventory.items(), 1):
+            self.fancy_text(f"{i}. {name} x{props['uses']} - {props['description']}")
+        
+        try:
+            choice = int(input("\nSelect item (number) or 0 to cancel: "))
+            if choice == 0:
+                return # 0 to cance;
+                
+            item_name = list(inventory.keys())[choice-1] # Previously explained
+            item_data = ITEMS[item_name]
+            
+            # Handle item effects
+            if item_data["effect"] == "heal":
+                if self.player.health == self.player.max_health: # Cannot heal if player at max health
+                    self.fancy_text("You're already at full health!")
+                    time.sleep(0.5)
+                    return
+                
+                self.player.heal(item_data["amount"]) # Otherwise heal specified amount
+                self.player.use_item(item_name)
+                self.fancy_text(f"Used {item_name}! HP restored to {self.player.health}/100")
+            
+            elif item_data["effect"] == "full_heal": # For Starlight Jug, which is used to fully heal
+                self.player.full_heal()
+                self.player.use_item(item_name)
+                self.fancy_text(f"Used {item_name}! HP fully restored to {self.player.health}/100")
+            
+            elif item_data["effect"] == "light_room": # Flashlight item
+                room = self.rooms[self.current_room]
+                if room.is_dark:
+                    self.fancy_text("You light up the room!")
+                    room.is_dark = False # Mark dark room as false since it's lit now
+                    # Remove from dark rooms set if it exists there
+                    if self.current_room in self.game_data["dark_rooms"]:
+                        self.game_data["dark_rooms"].remove(self.current_room) # Remove current room from dark rooms
+                    # Generate new normal room description
+                    self.player.use_item(item_name)
+                    # Redisplay room info
+                    self.show_status()
+                    self.fancy_text(f"Room {self.current_room:04d}: {random.choice(ROOM_TYPES)}")
+                else:
+                    self.fancy_text("No need to use this in a lit room!") # Don't use in lit rooms
+            
+            elif item_data["effect"] in ("unlock", "open_door"):
+                self.fancy_text(f"You can use {item_name} when facing a locked door!") # Lockpicks
+            
+            else:
+                self.fancy_text(f"Used {item_name}!")
+                self.player.use_item(item_name)
+                
+        except (ValueError, IndexError):
+            self.fancy_text("Invalid selection!") # Error handler
+
+        time.sleep(0.5)
+    
+    def attempt_puzzle(self, room_num):
+        """Main function for puzzle rooms"""
+        puzzle = PUZZLES[room_num] # Fetch all puzzle rooms (0025, 0050, 0075, 0100)
+        self.fancy_text(puzzle["description"])
+        
+        if room_num == 25:  # Lever puzzle
+            while True:
+                choice = input("\nWhich lever will you pull? (1-5) or H for hint: ").strip().lower()
+                
+                try:
+                    choice_int = int(choice)
+                    if 1 <= choice_int <= 5:
+                        if choice_int == puzzle["solution"]:
+                            # Right choice
+                            self.fancy_text("The path ahead opens!")
+                            self.game_data["completed_puzzles"].add(room_num)
+                            return True  # Puzzle solved
+                        else:
+                            # Wrong choice
+                            # 50% chance to damage player, 50% chance to do nothing
+                            RNG = random.random()
+                            if RNG < 0.50:
+                                self.fancy_text("Nothing happens. Try again.")
+                            else:
+                                self.player.health -= 5
+                                self.fancy_text("\nThe lever activates a trap, damaging you for 5 HP!")
+                                self.fancy_text(f"Current HP: {self.player.health}/100")
+                                
+                                # Check for death
+                                if self.player.health <= 0:
+                                    self.fancy_text("\nYou've run out of health!")
+                                    return False  # Player died
+                    else:
+                        self.fancy_text("Please enter a number between 1-5!") # Error handlers
+                except ValueError:
+                    self.fancy_text("Please enter a number between 1-5 or H for hint!") # Same with this one
+        
+        elif room_num == 50:  # Riddle at room 50
+            while True:
+                answer = input("Your answer (or H for hint): ").strip().lower()
+                if answer == 'h':
+                    self.fancy_text(f"Hint: {puzzle['hint']}")
+                    continue
+                
+                if answer == puzzle["solution"]:
+                    self.fancy_text("Correct! The way forward is clear.")
+                    time.sleep(0.5)
+                    self.game_data["completed_puzzles"].add(room_num)
+                    return True
+                else:
+                    self.fancy_text("Incorrect. Try again.")
+        
+        elif room_num == 75:  # Pressure plates at room 75
+            while True:
+                self.fancy_text("Enter the sequence (e.g., '2 4 1 3') or H for hint: ")
+                choice = input().strip().lower()
+                if choice == 'h':
+                    self.fancy_text(f"Hint: {puzzle['hint']}")
+                    continue
+                
+                try:
+                    sequence = list(map(int, choice.split())) # Arange the pressure plates into a sequence using list
+                    if sequence == puzzle["solution"]:
+                        self.fancy_text("The plates click into place!")
+                        time.sleep(0.5)
+                        self.game_data["completed_puzzles"].add(room_num)
+                        return True
+                    else:
+                        self.fancy_text("Nothing happens. Try again.")
+                except ValueError:
+                    self.fancy_text("Please enter numbers separated by spaces!")
+        
+        elif room_num == 100:  # Final puzzle before players beat game
+            while True:
+                self.fancy_text("Your answer (or H for hint): ")
+                answer = input().strip().lower()
+                if answer.lower() == 'h':
+                    self.fancy_text(f"Hint: {puzzle['hint']}")
+                    continue
+                
+                try:
+                    if int(answer) == puzzle["solution"]:
+                        # Special handling for final puzzle
+                        self.game_data["completed_puzzles"].add(room_num)
+                        self.current_room = 100  # Ensure we're at room 100
+                        self.move_forward()  # This will handle the victory outro
+                        return True
+                    else:
+                        self.fancy_text("The gate remains sealed. Try again.")
+                except ValueError:
+                    self.fancy_text("Please enter a number!")
+    
+    def show_status(self):
+        """Main function to handle status display. Part of the UI too"""
+        room = self.rooms[self.current_room]
+        # Duplicated rooms will show "Room ????", normal rooms show normal room numbers, e.g. "Room 0053"
+        room_display = "????" if room.has_duplicated_rooms else f"{self.current_room:04d}" 
+        # Status bar that's displayed to the user throughout the game. Very important!
+        self.fancy_text(f"Room: {room_display} | HP: {self.player.health}/{self.player.max_health} | Coins: {self.player.coins}") 
+        if self.player.inventory:
+            # Display inventory
+            inventory = self.player.get_consolidated_inventory()
+            # Construct a string that lists each item and its quantity in the format "ItemName xUses" (for example, "Potion x2")
+            # This is done using a list comprehension that iterates over the consolidated inventory's items and formats each entry accordingly
+            self.fancy_text("Inventory: " + ", ".join([f"{name} x{props['uses']}" for name, props in inventory.items()]))
+    
+    def show_intro(self):
+        try:
+            with open("data/intro.md", "r", encoding='utf-8') as f: # read intro from intro.md
+                intro_text = f.read() # file handling skills that we learnt in class came in clutch for this one
+                self.fancy_text(intro_text)
+                
+            while True:
+                choice = input("\nPress Enter to begin your nightmare... (or enter H for help / Q to surrender) > ").strip().lower()
+                if choice == '':
+                    return  # Start the game
+                elif choice == 'h':
+                    self.show_help() # HELPPPPP
+                    return
+                elif choice == 'q':
+                    self.fancy_text("\nThanks for checking out the game! Goodbye.") # Goodbye :(
+                    exit()
+                else:
+                    self.fancy_text("Invalid choice. Please press Enter, H, or Q.") # Invalid choice
+
+        except FileNotFoundError: # Special FileNotFoundError exception just in case if somehow intro.md is missing
+            # WHICH SHOULD NEVER HAPPEN IN THEORY, BUT I'M JUST PUTTING IT HERE TO ENSURE EXCELLENT ERROR HANDLING
+            self.fancy_text("Welcome to Rooms!") # Short and brief
+            input("\nPress Enter to begin > ")
+    
+    def show_help(self):
+        # Define the help slides
+        help_slides = [ # 4 help slides in total
+"""===== HELP GUIDE (1/4) =====
+
+Game Controls:
+W - Move forward
+S - Move backward
+L - Loot current room
+U - Use item from inventory
+""",
+"""===== HELP GUIDE (2/4) =====
+
+Game Controls (continued):
+Q - Quit game
+H - Show this help menu
+            
+Game Basics:
+- Explore 100 rooms with challenges
+- Watch your health (100 max)
+""",
+"""===== HELP GUIDE (3/4) =====
+
+Entities:
+- Various creatures inhabit the rooms
+- Each has unique behaviors
+- Some can be avoided with quick thinking
+            
+Items:
+- Find useful items while looting
+- Manage your inventory carefully
+""",
+"""===== HELP GUIDE (4/4) =====
+
+Puzzles & Obstacles:
+- Every 25 rooms contain puzzles
+- Solve them to progress
+- Some rooms have obstacles to overcome
+            
+What will you do?
+[P] Play Game
+[Q] Quit
+"""
+        ]
+        
+        current_slide = 0 # Start at slide 0
+        while True:
+            print("\033c", end='')  # Clear screen
+            self.fancy_text(help_slides[current_slide])
+            
+            if current_slide == len(help_slides) - 1:
+                # Last slide - offer play/quit options
+                choice = input("Choose: ").lower()
+                if choice == 'p':
+                    return  # Return to game
+                elif choice == 'q':
+                    self.fancy_text("\nThanks for checking out the game! Goodbye.")
+                    exit()
+                else:
+                    self.fancy_text("Invalid choice. Please press P or Q.")
+                    continue
+            else:
+                # Navigation for other slides
+                choice = input("Press D for next page or A for previous page > ").lower()
+                if choice == 'd' and current_slide < len(help_slides) - 1:
+                    current_slide += 1 # Next slide
+                elif choice == 'a' and current_slide > 0:
+                    current_slide -= 1 # Previous slide
+                elif choice in ('q', 'p'):
+                    # Allow early exit if player wants
+                    if choice == 'p':
+                        return
+                    else:
+                        self.fancy_text("\nThanks for checking out the game! Goodbye.")
+                        exit()
+                else:
+                    self.fancy_text("Invalid input. Use A/D to navigate.")
+    
+    def replay_prompt(self):
+        """Replay option after death. Quite important"""
+        while True:
+            choice = input("\nWould you like to (R) replay or (Q) quit? > ").strip().lower()
+
+            if choice == 'r': # Replay
+                while True:
+                    skipIntro = input("Skip the introduction? (Y/N) > ").strip().lower()
+                    if skipIntro == 'y': # No intro
+                        self.__init__() # Skip intro and just __init__
+                        return True
+                    elif skipIntro == 'n': # Yes intro
+                        self.__init__()  # Reset game state
+                        print("\033c", end='')  # Clear screen
+                        self.show_intro() # Show the intro again
+                        return True
+                    else:
+                        self.fancy_text("Invalid choice. Please enter Y or N.\n")  # This will loop again
+            elif choice == 'q':
+                self.fancy_text("\nThanks for playing! Goodbye.")
+                exit()
+            else:
+                self.fancy_text("Invalid choice. Please enter R or Q.")
+
+    @staticmethod
+    def fancy_text(text):
+        """
+        A fancy text function to simulate typing effect
+        I learnt this effect from Stack Overflow a few weeks ago, found it quite interesting, and adapted it for my game. Thank God I did.
+
+        This is the sole reason why so many people praised my game, I owe it too much
+        """
+        for char in text:
+            time.sleep(0.02) # Print character every 20 miliseconds
+            print(char, end='', flush=True)
+        print()
+```
+
+**main.py**
+```python
+from constants import * # Import everything from constants.py
+from functions import Game # Only need to import Game class since Player and Room will be background, game is the major class here
+import time
+
+def main():
+    """Main user interface"""
+    game = Game() # Main game functions
+    print("\033c", end='') # Clear screen
+    game.show_intro() # Intro
+    print("\033c", end='')
+    
+    while True:
+        print("\033c", end='')
+        game.show_status() # Show player the status bar
+        
+        room = game.rooms[game.current_room]
+        
+        # Handle puzzle rooms first
+        if game.current_room in PUZZLES and game.current_room not in game.game_data["completed_puzzles"]:
+            game.attempt_puzzle(game.current_room)
+            continue
+        
+        # Handle duplicated rooms event
+        if room.has_duplicated_rooms:
+            if not game.move_forward():  # This will trigger the event handling
+                continue
+        
+        # Show room description
+        game.fancy_text(room.persistent_description)
+        
+        # Handle entity, obstacle or dupe rooms event
+        if game.current_room in PUZZLES and game.current_room not in game.game_data["completed_puzzles"]:
+            if not game.attempt_puzzle(game.current_room):
+                game.fancy_text("\n💀  YOU DIED! Game over.")
+                game.fancy_text(f"You made it to Room {game.current_room:04d}")
+                game.fancy_text(f"Coins collected: {game.player.coins}")
+                if not game.replay_prompt(): # Replay or nah
+                    break
+                continue
+        elif room.has_entity:
+            if not game.handle_entity_encounter():
+                game.fancy_text("\n💀  YOU DIED! Game over.")
+                game.fancy_text(f"You made it to Room {game.current_room:04d}")
+                game.fancy_text(f"Coins collected: {game.player.coins}")
+                if not game.replay_prompt():
+                    break
+                continue
+        elif room.has_obstacle:
+            if not game.handle_obstacle():
+                game.fancy_text("\n💀  YOU DIED! Game over.")
+                game.fancy_text(f"You made it to Room {game.current_room:04d}")
+                game.fancy_text(f"Coins collected: {game.player.coins}")
+                if not game.replay_prompt():
+                    break
+                continue
+        
+        # Get player input
+        command = input("\nOptions: [W] Forward | [S] Backward | [L] Loot | [U] Use Item | [Q] Quit > ").lower()
+        
+        if command == "w":
+            if not game.move_forward(): # Forward
+                continue
+        elif command == "s":
+            game.move_backward() # Backward
+        elif command == "l":
+            game.loot_room() # Looting rooms
+        elif command == "u":
+            game.use_item() # Use item
+        elif command == "q":
+            game.fancy_text("\nThanks for playing! Goodbye.")
+            exit() # Exit
+        else:
+            game.fancy_text("Invalid command! Please enter a valid command.")
+            time.sleep(0.5) # Error handling
+
+if __name__ == "__main__":
+    main()
+```
+
+## **End of Sprint 4 - Review Questions**
+
+### Evaluate how effectively your project meets the functional and non-functional requirements defined in your planning.
+* Refer to specific criteria or expectations outlined in your requirements document.
+
+As usual, I can confidently say that my program perfectly fits my criteria of functional and non-functional requirements. I think I’ve said this way too much in the review sections for previous sprints, but my program will always be able to match up to all the functional and non-functional requirements even if it’s in a broken and completely messed-up state. Since there was basically no new major updates in Sprint 4, I can confidently say that the standards for the functional and non-functional requirements in Sprint 4 was basically the same as it was in Sprint 3. In case you still doubt it, I'll be more specific. The program would never fail in delivering the most reliable information to the player, satisfying Data Retrieval and Data Display. The user interface is simple enough, and the program is also optimized enough to support usage on any computer. The system's data is reliable and accessible, and the system contains only little bugs itself, which doesn't really impact the player's performance in the game since the errors are more display-based.
+
+### Analyse the performance of your program against the key use-cases you identified.
+* Discuss whether the program behaves as expected and handles input/output as planned.
+
+The program mostly behaves as expected, and handles input and output as planned. An example of this is the help function that is shown to the players as they start the game. Players can literally use A/D keys to navigate through 4 pages of the help guide, which to me, is already impressive enough. Also, during entity encounters, the system does allow player inputs in order to avoid entities. For example, when Tralalero Tralala appears, the player can effectively use the R key on their keyboard to scare Tralalero away. This is a very well-made function, and to be honest I am very proud of myself for being able to create such function. However, good things aside now, the program does have a little bugs which I couldn't fix in time, and also, the system can also produce text in the console that may not be fully coherent to some players, and can appear as bugs. I am perfectly aware of these bugs and have attempted my best to try and fix them, however I was not able to get them done before the due date.
+
+### Assess the quality of your code in terms of readability, structure, and maintainability.
+* Consider naming conventions, use of functions, comments, and overall organisation.
+
+Sprint 4 is the ultimate and final major update for this game. As usual, I felt like the code is extremely structured, with classes neatly listed on top of each other in **functions.py.** Aside from that, main.py remains simple, with just less than 100 lines of code for the user interface. I've also used plenty of code comments in my code to explain how each section of the code works. Due to the complexity of Sprint 4, some code may be extremely difficult to read and understand, weakening readability by a bit, but is still doable. Code is neatly structured, such example being in constants.py, where every single dictionary is neatly formatted and organized. Functions are cleverly designed, and each function contributes a significant part in the game's logic. In summary, might not be too readable, but that's alright. Structured? Definitely. The code is very maintainable too, since I am 100% sure that it can last in the long run, due to the fact that the code is all Python with no 3rd party modules import needed.
+
+### Explain the improvements that should be made in the next stage of development.
+* Include both feature enhancements and refinements to code quality or structure.
+
+Although this is the last sprint, and I'm probably not going to work on this anymore after the task is due, there would still be some improvements I would make to the current version of the game if we were to say that theoretically I would be working on this again after submission. Since I would be free of stress from the scary due date, I could go explore with much, much more complex code and implement them into my game. Heck, I could make anything I want! A multiplayer lobby option even! (Which is theoretically impossible on text-based interfaces but who knows? Maybe I could innovate!). Without this time limit of having to shuffle everything up before the due date, I could work on this in my free time, researching for more code that could in any way make this game even better! I could add anything I want to the game, I will just let my creativity imagination fly free and roam in the sky above me.
+
+## **Evaluation of System**
+
 ## Peer Evaluation
 
 ### Peer 1: Ronen Gupta
@@ -1055,19 +3775,19 @@ A quite good OOP game I must admit, Levin! Text-based and also eerie in a way, p
 #### Final Feedback from Victor Guo:
 Levin's text-based game "Rooms" integrates many of his requirements that he has outlined, while implementing a fancy_text function to enhance the user experience. When the player takes damage, they are automatically moved to the next room; however, the user may find this illogical and suggest it should be fixed. Overall, a well-crafted game with its own unique aesthetic.
 
-## Evaluation of System
+## Evaluation Questions
 
-1. **Explain how you could improve your system in future updates. Analyse the impact these updates could have on the user experience.**
+### 1. **Explain how you could improve your system in future updates. Analyse the impact these updates could have on the user experience.**
 
 To improve my system in future updates, first of all, I could implement new classes that handles different functions within each room that the player enters. Right now, the **Game** class is everything. It basically carries the most important functions within my game, and not to mention that there are a ton of these functions. I could sort out the Game class by separating its functions into mini-classes. Then, I could create more interesting experiences for the player as they explore throughout the rooms. As Ronen Gupta had commented in the peer review, my game is currently way too repetitive and delivers little challenges. This makes me think that I could make my game more challenging and spike up the difficulty meter.
 
 I feel like these changes really wouldn't matter when we go into a player-based perspective. First of all, as long as none of the major functions are impacted by changes that decrease their functionality, I don't think there would be any changes to the game itself if we are just sorting out the background while maintaining the existing functions. Also, if we want to create more interesting experiences for the player and spiking up the difficulty for the game, I don't think players would dislike this change, but rather they would like it, because sure, the difficulty would be ramped up by a lot, making it harder to beat the game, but the game being easy right now is what makes it boring. Adding this change could make the game less repetitive, and actually make it challenging, which is what every game needs.
 
-2. **Evaluate the system in terms of how well it meets the requirements and specifications.**
+### 2. **Evaluate the system in terms of how well it meets the requirements and specifications.**
 
 Overall, I felt like my final product managed to meet my requirements and specifications quite well. I gotta admit that the final product was not up to my expectations, but it's also reasonable because I had severely overestimated my programming skills when I was planning the system flow of the game. Although the system is quite underwhelming with a lot of bugs present, it still was up-tp-par with my requirements and specifications, however. For example, my system can at least send out data to the player, which already satisfies a functional requirement. Not only this, my program is quite simple to understand and use, and requires little equipment in order to run it. My program doesn't crash or freeze the system, and is very optimized as well. There is planned user interaction between objects, and the core features still remain at where they are. Also, a really good trait of my current system is that it can easily handle errors, returning error messages to players whenever they make a mistake. In summary, my program still suits my original requirements and specifications even though it was not up to my previous expectations.
 
-3. **Evaluate your processes in terms of project management.**
+### 3. **Evaluate your processes in terms of project management.**
 
 As you can see from the Gantt Chart, I have clearly misjudged the difficulty of the **Build and Test** processes of this task. Although Sprint 1 was quite up-to-par with my inital expectations due to the program being quite simple to code thanks to the simplicity of it, everything began to take a dark turn at Sprint 2. The practical process of Sprint 2 was WAY more complicated, and it genuinely robbed me of lots of time due to the long periods of time I have to spend investing and digging into the code, scrolling through thousands of Stack Overflow forums just to develop the program to my expected extent. And when that's finally out of the water, I had to deal with Sprint 3. The theory contents (mainly the review and launch sections) at this point genuinely seemed like a piece of cake to me now, since I could literally get them done in maybe 30 minutes to an hour. What I really was worried about in this stage, the main concern at the top of my head, is the **prac.** As you can see, Sprint 3's **Build and Test** process was around 10000x (not really, just an exaggeration) more difficult than Sprint 2, since I had to add tons of new features into it, and I should've known that if I was struggling this much with Sprint 2, there would be no way I would've even finish Sprint 3 before the due date. That's when the grey thundercloud began to rumble and send lightning strikes in my head. My life literally flashed before my eyes for a second.
 
@@ -1077,7 +3797,7 @@ And that, was the story of how I **almost** didn't finish the project before it 
 
 **TL; DR:** Sprint 3 sucks, and I feel like my brain aged by 50 years after I finished it.
 
-4. **Gather feedback from at least two peers on meeting of functional and non-functional specifications.**
+### 4. **Gather feedback from at least two peers on meeting of functional and non-functional specifications.**
 
 The PMI tables are up there, so now I'm going to review their reviews and go through each of them thoroughly. Let's start with Ronen Gupta's review.
 
@@ -1100,3 +3820,59 @@ Now let's respond to Victor Guo's review.
     I can perfectly understand. I've faced this bug multiple times before, but I've always made it a goal to try and fix it. I did eventually reach a point of coming up with somewhat a decent solution to fix this issue, however. Besides from that, I perfectly understand this critique from Victor Guo.
 
 Overall, really good reviews from both peers of mine, and I greatly appreciate them for being brutally honest on their reviews. These reviews had managed to make my program even better than before, and also helped me gain a valuable insight into how my game performs and how other people perceive it. It gives me a perfect example of the reception that my game would face when it's released to the broader public. Thanks to these reviews, I can carefully work and fix on the negatives while making the positives even better.
+
+### 5. **Justify your use of OOP class features**
+
+In my game, I have implemented a lot of OOP principles. Each of these principals demonstrate several key advantages of using classes and objects for my game's development.
+
+1. **Player Class (Encapsulation)**
+- The Player class encapsulates all player-related data and behavior
+- It manages health, inventory, coins, and special room visits as attributes
+- Methods like add_item(), use_item(), and heal() are provided to modify these attributes safely
+- I've also used private attributes (like max_health) that can only be modified through class methods
+- It consolidates inventory management with get_consolidated_inventory()
+
+The Player class prevents direct manipulation of player state from outside the class which ensures data integrity. For example, the heal() method ensures health never exceeds max_health through its implementation: self.health = min(self.max_health, self.health + amount).
+
+2. **Room Class**
+- The Room class focuses solely on room-related functionality
+- Manages room state (visited, looted, dark status)
+- Handles entity and obstacle spawning
+- Contains room-specific logic like the duplicated rooms event
+- Provides room descriptions through get_room_description()
+
+Each Room instance maintains its own state, allowing different rooms to behave differently. I've carefully separated the room logic from the main game logic to make the code more maintainable, since changes to room behavior won't affect other game systems.
+
+3. **Game Class**
+- The Game class acts as the main controller
+- Coordinates interactions between Player and Room objects
+- Manages game state through game_data dictionary
+- Handles high-level game flow (movement, puzzles, etc.)
+- Provides user interface functions like fancy_text()
+
+This class is very important since it centralizes game logic while delegating specific responsibilities to other classes. For example, when moving forward, the Game class will:
+
+- Check the current Room's state
+- Delegate to Room methods if needed (like handle_duplicated_rooms())
+- Update the Player's state accordingly
+
+For heaven's sakes, this class does everything!
+
+4. **In the future, I could add inheritance and polymorphism**
+
+I didn't implement these in my final game, but in the future, I can easily extend my program to allow for them to be implemented into the game.
+
+- New entity types can be added by extending the ENTITIES dictionary
+- New room types can inherit from the base Room class
+- New player abilities (an idea I have in mind) could be added through Player class extensions
+
+For example, adding a new puzzle type would only require adding to the PUZZLES dictionary and implementing its handling in attempt_puzzle() - no changes to core class structures would be needed.
+
+5. **Integration**
+
+The division between constants.py (data), functions.py (logic), and main.py (execution/user interface) demonstrates excellent integration.
+
+- Constants are defined separately for easy modification
+- Game logic is encapsulated in classes
+- Main execution flow is clean and simple
+- This makes the code more maintainable - changing room descriptions in constants.py won't risk breaking game logic, and vice versa.
