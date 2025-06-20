@@ -1020,6 +1020,8 @@ I can say that I have fulfilled most of my plans in Sprint 3. In this Sprint, I 
 # **Sprint 4**
 
 ## **Design**
+## Identify Potential Enhancements
+In Sprint 4, there are still some potential enhancements I could add to my program even though there are already a ton of features I've added in Sprint 3. Such examples include reworking some entities so that they appear more threatening and reckless when the players encounters them. I could also make the first 5 rooms immune from any entities, obstacles or room events so players actually have the time to prepare. Also, I have another idea in mind: adding a new entity called **Ballerina Cappuccina**, which will damage the player and send them back to their original room after they go backwards too much. This entity can limit how the player can freely roam around the lobbies, and can also fix some issues surrounding entities. Lastly, I could also add more obstacles and generate more outcomes for them
 
 ## Updated Gantt Chart with Milestones
 
@@ -1083,3 +1085,15 @@ The PMI tables are up there, so now I'm going to review their reviews and go thr
 - **Negatives: Some minor bugs in the text, a bit too repetitive**
 
     These negatives matter to me way more than positives, because who would care about the positives more than the negatives unless you are an optimistic person and I'm... not? Maybe? Anyway, to Mr Ronen Gupta, I would like to thoroughly apologize that you did not enjoy my game as much due to these errors. I gotta admit, I am not a professional coder, so it's a bit hard for me to literally havbe to find every single bug in the game, then come up with a solution to fix them. Also, I gotta admit that I've already fixed around 80% of the bugs in the game, and Mr Gupta had just managed to come across the rare 20%. I will definitely fix these bugs in the near future. In terms of repetition, I gotta agree myself, but there's really not much I can do about it since you literally gotta move forward to Room 100 in order to beat the game. That's how the game and the system flow works!
+
+Now let's respond to Victor Guo's review.
+
+- **Positives: The game performs well, although it is a text-based game, so the performance would generally be better**
+
+    I perfectly agree with this statement. All text-based games will generally perform better than GUI games because they contain less assets and don't require computers that display high visual graphics. Otherwise, nothing much to say here.
+
+- **Negatives: The character teleports to the next room when damage is taken rather than staying in the room in which damage was dealt**
+
+    I can perfectly understand. I've faced this bug multiple times before, but I've always made it a goal to try and fix it. I did eventually reach a point of coming up with somewhat a decent solution to fix this issue, however. Besides from that, I perfectly understand this critique from Victor Guo.
+
+Overall, really good reviews from both peers of mine, and I greatly appreciate them for being brutally honest on their reviews. These reviews had managed to make my program even better than before, and also helped me gain a valuable insight into how my game performs and how other people perceive it. It gives me a perfect example of the reception that my game would face when it's released to the broader public. Thanks to these reviews, I can carefully work and fix on the negatives while making the positives even better.
