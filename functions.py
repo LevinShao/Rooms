@@ -3,6 +3,11 @@
 # My brain is literally burning right now, I am not joking.
 # Also, special thanks to QuackGod on Discord and a few other people for helping me with some sections of this code!
 
+# All of these modules right here are part of the standard Python library
+# They do NOT need to be pip installed!
+# This means that I don't need to write a requirements.txt file, since there is literally nothing needed for the player to install
+# They can literally just download the program, then run it as soon as they import it to VS Code
+
 import time # For time.sleep functions
 import random # RNG for entities and obstacles
 import msvcrt # Msvcrt is useful for non-blocking input in Windows
@@ -15,7 +20,10 @@ import msvcrt # Msvcrt is useful for non-blocking input in Windows
 # Since the player is only allowed 3 seconds in order to avoid the entity, otherwise they take damage
 # With msvcrt, the p0layer can just press the C key, and it would register as the player input without having to hit enter
 
-import sys, select # Sys is used as 
+# These two modules will be used as an alternative to msvcrt since msvcrt is Windows-only
+# These two are used for any other OS other than Windows
+import sys
+import select
 
 from constants import * # Import everything from constants.py
 
